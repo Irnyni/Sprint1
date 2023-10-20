@@ -1,5 +1,5 @@
 const database = require("../../database/TempDatabase");
-const ItemPatrimonio = require("../../database/model/ItemPatrimonio");
+const Postagem = require("../../database/model/ItemPatrimonio");
 const ItemRepoSeed = require("../../database/seed/ItemPatrimonioSeed");
 
 class PostagemRepository{
@@ -11,25 +11,25 @@ class PostagemRepository{
     }
 
     async create(dados){
-        const newItem = new Postagem(
-            (postagem= dados.postagem),
-            (descricao = dados.descricao),
-
-          )
+        const newItem = new Postagem({
+            postagem: dados.postagem,
+            descricao: dados.descricao,
+          });
+          
         database.addItem(newItem);
         return newItem;
     }
 
-    async find(itemDescricao){
-        return database.findByPostagem(itemDescricao);
+    async find(descricao){
+        return database.findByPostagem(descricao);
     }
 
     async all(){
         return database.getAllItems();
     }
 
-    async remove(patrimonioId){
-        return database.removeByPatrimonio(patrimonioId);
+    async remove(postId){
+        return database.removeByDescricao(postId);
     }
 }
 

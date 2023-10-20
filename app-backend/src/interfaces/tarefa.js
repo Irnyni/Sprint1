@@ -1,4 +1,4 @@
 export default {
     descricao: "",
-    post: ""
+    postagem: ""
   };

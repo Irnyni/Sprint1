@@ -1,10 +1,8 @@
 <template>
   <div>
-    <h1>Lista de Itens</h1>
+    <!-- <h1>Lista de Itens</h1> -->
     <ul>
-      <li v-for="item in items" :key="item.id">
-        {{ item.nome }} - {{ item.descricao }}
-      </li>
+
     </ul>
   </div>
 </template>

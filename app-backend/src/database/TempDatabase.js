@@ -19,11 +19,11 @@ class TempDatabase {
     }
 
      findByPostagem(postagem) {
-           return this.items.filter(item => item.Postagem === postagem)[0];
+           return this.items.filter(item => item.postagem === postagem)[0];
      }
 
     removeByPostagem(postagem) {
-        let item = this.items.splice(this.items.findIndex(item => item.patrimonio === postagem), 1);
+        let item = this.items.splice(this.items.findIndex(item => item.postagem === postagem), 1);
         return item;
     }
 }

@@ -1,25 +1,25 @@
 
-const ItemPatrimonioRepository = require("../repositories/ItemPatrimonioRepository");
+const PostRepository = require("../repositories/PostRepository");
 
 module.exports = {
-    getAllItemPatrimonio: async function (){
-        const data = await ItemPatrimonioRepository.all();
+    getAllPost: async function (){
+        const data = await PostRepository.all();
         return data;
     },
 
-    getItemPatrimonioById: async function (patrimonioId){
-        const data = await ItemPatrimonioRepository.find(patrimonioId);
+    getPostById: async function (postagemId){
+        const data = await PostRepository.find(postagemId);
         return data;
     },
 
-    addNewItemPatrimonio: async function (itemPatrimonio){
-        const data = await ItemPatrimonioRepository.create(itemPatrimonio);
+    addNewPost: async function (Postagem){
+        const data = await PostRepository.create(Postagem);
         if(data) return {status: "Item criado com sucesso."}
         else return {status: "Não foi possível criar o item"}
     },
     
-    removeItemPatrimonioById: async function(patrimonioId) {
-        const status = await ItemPatrimonioRepository.remove(patrimonioId);
+    removePostById: async function(postagemId) {
+        const status = await PostRepository.remove(postagemId);
         if(status) return {status: "Item removido com sucesso."}
         else return {status: "Item não encontrado."}
     }
