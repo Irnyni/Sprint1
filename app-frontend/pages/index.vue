@@ -90,7 +90,7 @@
           <v-img :src="item.imagem" height="500" class="imgg"></v-img>
   
           <v-card-text>
-              <h3>   {{ item.postagem }}</h3>
+              <p>   {{ item.postagem }}</p>
            
             </v-card-text>
             <template v-slot:actions>
@@ -150,13 +150,13 @@
 </template>
 
 <script setup lang="js">
-
+import axios from 'axios';
 // ===== FETCH DATA =====
-const URL_SERVER = "http://localhost:3000/api/";
+const URL_SERVER = "http://localhost:5000";
 // https://stackoverflow.com/questions/75680934/nuxt3-nuxt-request-error-unhandled-500-fetch-failed-http-localhost#:~:text=%22dev%22%3A%20%22nuxt%20dev%20--host%200.0.0.0%22%20If%20the%20issue,an%20SSL%20issue%20or%20something%20with%20node%20v18
 // https://nuxt.com/docs/api/composables/use-async-data
 // https://nuxt.com/docs/api/utils/dollarfetch
-const { data } = await useAsyncData('', () => $fetch(URL_SERVER + 'index'))
+const { data } = await useAsyncData('', () => $fetch(URL_SERVER ))
 
 const items = reactive(data.value);
 
@@ -171,33 +171,7 @@ const perPage = ref(3);
 const url = ref('');
 const profileImageURL = getRandomProfileImageURL();
 
-const posts =reactive( [
-  {
-    descricao: "Matrix Resurrections",
-    postagem: "Assisti ao filme 'Matrix Resurrections' e fiquei impressionado com os efeitos especiais e a história intrigante. Keanu Reeves entrega uma atuação incrível como Neo.",
-    imagem: "https://ogimg.infoglobo.com.br/rioshow/24118715-847-afa/FT1086A/760/matrix.jpg",
-  },
-  {
-    descricao: "Duna",
-    postagem: "Ontem à noite, assisti ao épico 'Duna'. A fotografia é deslumbrante e a trama é cativante. Ansioso pela sequência!",
-    imagem: "https://olhardigital.com.br/wp-content/uploads/2021/05/Elenco-de-Duna-tem-scaled.jpg",
-  },
-  {
-    descricao: "No Time to Die",
-    postagem: "O último filme de James Bond, 'No Time to Die', é uma montanha-russa de ação e emoção. Daniel Craig encerra sua jornada como Bond de maneira espetacular.",
-    imagem: "https://static.mediapart.fr/etmagine/article_google_discover/files/2022/01/27/no-time-to-die-mgm-sets-pvod-release-date-for-daniel-craigs-final-bond-film.jpg",
-  },
-  {
-    descricao: "Spider-Man: No Way Home",
-    postagem: "Assisti ao filme 'Spider-Man: No Way Home' e fiquei maravilhado com o multiverso do Homem-Aranha. Uma explosão de nostalgia para os fãs!",
-    imagem: "https://gkpb.com.br/wp-content/uploads/2022/06/fagWFrNEGrM2p3DCOwgrO5fBmUn-scaled-e1655148584687.jpg",
-  },
-  {
-    descricao: "Inception",
-    postagem: "Reassisti 'Inception' de Christopher Nolan. A complexa trama dos sonhos ainda me fascina, e a atuação de Leonardo DiCaprio é incrível.",
-    imagem: "https://frontmediaspot.com/wp-content/uploads/2023/07/Inception-3.jpg",
-  },
-]);
+const posts = reactive([]);
 
 const novoItem = ref({
   descricao: "",
@@ -206,22 +180,81 @@ const novoItem = ref({
 });
 
 
-function createNewItem(novoItem) {
-  const novaPostagem = {
-    descricao: novoItem.descricao,
-    postagem: novoItem.postagem,
-    imagem: novoItem.imagem
-  };
-  console.log(novaPostagem);
+// function createNewItem(novoItem) {
+//   const novaPostagem = {
+//     descricao: novoItem.descricao,
+//     postagem: novoItem.postagem,
+//     imagem: novoItem.imagem
+//   };
+  
+//   console.log(novaPostagem);
 
-  posts.push(novaPostagem);
+//   posts.push(novaPostagem);
+// console.log(posts);
+//   // Limpe o objeto novoItem após adicionar a nova postagem
+//   novoItem.descricao = "";
+//   novoItem.postagem = "";
+//   novoItem.imagem = "";
+// }
+onMounted(() => {
+  fetchData(); // Chama a função para buscar os dados do servidor no momento apropriado
+})
 console.log(posts);
-  // Limpe o objeto novoItem após adicionar a nova postagem
-  novoItem.descricao = "";
-  novoItem.postagem = "";
-  novoItem.imagem = "";
-}
+// async function createNewItem(novoItem) {
+//   console.log(posts);
+//   try {
+//     const novaPostagem = {
+//       descricao: novoItem.descricao,
+//       postagem: novoItem.postagem,
+//       imagem: novoItem.imagem
+//     };
+//     onMounted(() => {
+//   fetchData(); // Chama a função para buscar os dados do servidor no momento apropriado
+// })
+//     // Faça uma solicitação POST ao servidor Express
+//     await axios.post('/', novaPostagem);
+//     posts.push(novaPostagem);
+//     // Limpe o objeto novoItem após adicionar a nova postagem
+//     novoItem.descricao = "";
+//     novoItem.postagem = "";
+//     novoItem.imagem = "";
 
+//     // Atualize a lista de itens após a adição
+//     fetchData(); // Suponha que você tenha uma função fetchData para buscar os dados atualizados
+//   } catch (error) {
+//     console.error('Erro ao criar uma nova postagem:', error);
+//   }
+// }
+async function createNewItem(novoItem) {
+  try {
+    const novaPostagem = {
+      descricao: novoItem.descricao,
+      postagem: novoItem.postagem,
+      imagem: novoItem.imagem
+    };
+
+    const response = await axios.post(URL_SERVER, novaPostagem);
+
+    // Verifique a resposta do servidor para garantir que o item tenha sido criado com sucesso
+    if (response.status === 201) {
+      // Item criado com sucesso, você pode atualizar sua lista de itens chamando a função fetchData()
+      fetchData();
+      
+      // Limpe o objeto novoItem após adicionar a nova postagem
+      novoItem.descricao = "";
+      novoItem.postagem = "";
+      novoItem.imagem = "";
+
+      // Você também pode mostrar uma mensagem de sucesso para o usuário, se desejar
+      console.log('Nova postagem criada com sucesso!');
+    } else {
+      // Trate qualquer erro ou resposta inesperada do servidor aqui
+      console.error('Erro ao criar uma nova postagem:', response);
+    }
+  } catch (error) {
+    console.error('Erro ao criar uma nova postagem:', error);
+  }
+}
 
 function getRandomProfileImageURL() {
   const randomNumber = Math.floor(Math.random() * 100) + 1; // Gera um número aleatório de 1 a 100
@@ -243,6 +276,17 @@ function updateItemList () {
     items.value = data;
   })
 }; 
+async function fetchData() {
+  try {
+    const response = await axios.get(URL_SERVER);
+    const serverPosts = response.data; // Suponha que os dados do servidor são uma matriz de postagens
+    posts.splice(0, posts.length, ...serverPosts); // Limpa o array e adiciona os dados do servidor
+  } catch (error) {
+    console.error('Erro ao buscar os objetos:', error);
+  }
+}
+
+
 
 </script>
 
@@ -281,7 +325,7 @@ function updateItemList () {
   margin: 70px;
   }
   .profile-card{display: flex;flex-direction: column;  
-  justify-content: center;}
+  justify-content: center;line-height:20px;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;}
   h2{
     align-self: center;
   }

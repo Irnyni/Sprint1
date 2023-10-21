@@ -1,7 +1,17 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
-export default defineNuxtConfig({
+
+// nuxt.config.js
+
+export default {
+  // ...
+
   modules: [
     '@invictus.codes/nuxt-vuetify'
   ],
-  devtools: { enabled: true }
-})
+  devtools: { enabled: true },
+  
+  axios: {
+    baseURL: 'http://localhost:5000', // Defina o URL do servidor Express aqui
+  },
+
+  // ...
+}
