@@ -179,52 +179,11 @@ const novoItem = ref({
   imagem: ""
 });
 
-
-// function createNewItem(novoItem) {
-//   const novaPostagem = {
-//     descricao: novoItem.descricao,
-//     postagem: novoItem.postagem,
-//     imagem: novoItem.imagem
-//   };
-  
-//   console.log(novaPostagem);
-
-//   posts.push(novaPostagem);
-// console.log(posts);
-//   // Limpe o objeto novoItem após adicionar a nova postagem
-//   novoItem.descricao = "";
-//   novoItem.postagem = "";
-//   novoItem.imagem = "";
-// }
 onMounted(() => {
-  fetchData(); // Chama a função para buscar os dados do servidor no momento apropriado
+  fetchData(); 
 })
 console.log(posts);
-// async function createNewItem(novoItem) {
-//   console.log(posts);
-//   try {
-//     const novaPostagem = {
-//       descricao: novoItem.descricao,
-//       postagem: novoItem.postagem,
-//       imagem: novoItem.imagem
-//     };
-//     onMounted(() => {
-//   fetchData(); // Chama a função para buscar os dados do servidor no momento apropriado
-// })
-//     // Faça uma solicitação POST ao servidor Express
-//     await axios.post('/', novaPostagem);
-//     posts.push(novaPostagem);
-//     // Limpe o objeto novoItem após adicionar a nova postagem
-//     novoItem.descricao = "";
-//     novoItem.postagem = "";
-//     novoItem.imagem = "";
 
-//     // Atualize a lista de itens após a adição
-//     fetchData(); // Suponha que você tenha uma função fetchData para buscar os dados atualizados
-//   } catch (error) {
-//     console.error('Erro ao criar uma nova postagem:', error);
-//   }
-// }
 async function createNewItem(novoItem) {
   try {
     const novaPostagem = {
@@ -235,20 +194,17 @@ async function createNewItem(novoItem) {
 
     const response = await axios.post(URL_SERVER, novaPostagem);
 
-    // Verifique a resposta do servidor para garantir que o item tenha sido criado com sucesso
+   
     if (response.status === 201) {
-      // Item criado com sucesso, você pode atualizar sua lista de itens chamando a função fetchData()
       fetchData();
-      
-      // Limpe o objeto novoItem após adicionar a nova postagem
       novoItem.descricao = "";
       novoItem.postagem = "";
       novoItem.imagem = "";
 
-      // Você também pode mostrar uma mensagem de sucesso para o usuário, se desejar
+     
       console.log('Nova postagem criada com sucesso!');
     } else {
-      // Trate qualquer erro ou resposta inesperada do servidor aqui
+     
       console.error('Erro ao criar uma nova postagem:', response);
     }
   } catch (error) {
@@ -261,7 +217,7 @@ function getRandomProfileImageURL() {
   return `https://randomuser.me/api/portraits/women/${randomNumber}.jpg`;
 }
 function openCardView () {
-  // Use o .value para alterar os valores das propriedades definidas acima;
+ 
   cardView.value = true;
   tableView.value = false;
 };
@@ -279,8 +235,8 @@ function updateItemList () {
 async function fetchData() {
   try {
     const response = await axios.get(URL_SERVER);
-    const serverPosts = response.data; // Suponha que os dados do servidor são uma matriz de postagens
-    posts.splice(0, posts.length, ...serverPosts); // Limpa o array e adiciona os dados do servidor
+    const serverPosts = response.data; 
+    posts.splice(0, posts.length, ...serverPosts); 
   } catch (error) {
     console.error('Erro ao buscar os objetos:', error);
   }
