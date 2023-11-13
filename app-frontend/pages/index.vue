@@ -21,7 +21,7 @@
         <template v-slot:default="{ isActive }">
           <v-card title="CRIAR NOVO">
             <v-container>
-              <v-form v-on:submit.prevent="createNewItem(novoItem)">
+              <v-form v-on:submit.prevent="createPost(novoItem)">
                 <label class="mr-sm-2" for="input-descricao">Descrição:</label>
                 <v-text-field
                   id="input-descricao"
@@ -157,7 +157,6 @@ const URL_SERVER = "http://localhost:5000";
 // https://nuxt.com/docs/api/composables/use-async-data
 // https://nuxt.com/docs/api/utils/dollarfetch
 const { data } = await useAsyncData('', () => $fetch(URL_SERVER ))
-
 const items = reactive(data.value);
 
 // ===== DATA ======
@@ -184,17 +183,17 @@ onMounted(() => {
 })
 console.log(posts);
 
-async function createNewItem(novoItem) {
+async function createPost(novoItem) {
   try {
-    const novaPostagem = {
+    // Objeto com os dados do novo post
+    const post = {
       descricao: novoItem.descricao,
       postagem: novoItem.postagem,
       imagem: novoItem.imagem
     };
 
-    const response = await axios.post(URL_SERVER, novaPostagem);
-
-   
+    // Faz uma solicitação HTTP POST para adicionar o novo post
+    const response = await axios.post(`${URL_SERVER}/posts`, post);
     if (response.status === 201) {
       fetchData();
       novoItem.descricao = "";
@@ -207,10 +206,17 @@ async function createNewItem(novoItem) {
      
       console.error('Erro ao criar uma nova postagem:', response);
     }
+    // Limpa o formulário ou atualiza a lista após a postagem ser criada com sucesso
+    // (dependendo do seu fluxo de trabalho)
+    console.log('Postagem criada com sucesso:', response.data);
+
+    // Atualiza a lista de posts após adicionar um novo post
+    fetchData();
   } catch (error) {
     console.error('Erro ao criar uma nova postagem:', error);
   }
 }
+
 
 function getRandomProfileImageURL() {
   const randomNumber = Math.floor(Math.random() * 100) + 1; // Gera um número aleatório de 1 a 100
@@ -234,7 +240,7 @@ function updateItemList () {
 }; 
 async function fetchData() {
   try {
-    const response = await axios.get(URL_SERVER);
+    const response = await axios.get('http://localhost:5000/posts');
     const serverPosts = response.data; 
     posts.splice(0, posts.length, ...serverPosts); 
   } catch (error) {
