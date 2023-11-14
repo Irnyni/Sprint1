@@ -156,7 +156,7 @@ const URL_SERVER = "http://localhost:5000";
 // https://stackoverflow.com/questions/75680934/nuxt3-nuxt-request-error-unhandled-500-fetch-failed-http-localhost#:~:text=%22dev%22%3A%20%22nuxt%20dev%20--host%200.0.0.0%22%20If%20the%20issue,an%20SSL%20issue%20or%20something%20with%20node%20v18
 // https://nuxt.com/docs/api/composables/use-async-data
 // https://nuxt.com/docs/api/utils/dollarfetch
-const { data } = await useAsyncData('', () => $fetch(URL_SERVER ))
+const { data } = await useAsyncData('', () => $fetch(URL_SERVER))
 const items = reactive(data.value);
 
 // ===== DATA ======
