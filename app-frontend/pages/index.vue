@@ -98,6 +98,35 @@
               <v-btn color="primary" variant="text">Comentar</v-btn>
             </template>
           </v-card>
+          
+
+
+          <v-container fluid>
+    <v-col v-for="comment in comments" :key="comment.id">
+      <card-item :item="comment"></card-item>
+      <v-card
+        border
+        class="coment-card"
+        density="compact"
+        :prepend-avatar="profileImageURL"
+        subtitle="geek"
+        title="Mariana"
+        variant="text"
+      >
+        <p class="titulo">{{ comment.descricao }}</p>
+        <!-- Adicione os detalhes do comentário conforme necessário -->
+        <template v-slot:actions>
+          <v-btn color="primary" variant="text">Curtir</v-btn>
+        </template>
+      </v-card>
+    </v-col>
+  </v-container>
+
+
+
+          
+
+          
       </v-col>
   
   </v-container>
@@ -150,6 +179,7 @@
 </template>
 
 <script setup lang="js">
+import { ref, onMounted, defineProps } from 'vue';
 import axios from 'axios';
 // ===== FETCH DATA =====
 const URL_SERVER = "http://localhost:5000";
@@ -169,7 +199,16 @@ const totalRows = ref(0);
 const perPage = ref(3);
 const url = ref('');
 const profileImageURL = getRandomProfileImageURL();
+const { postId } = defineProps(['postId']);
 
+const comments = ref([
+  { id: 1, descricao: 'Ótimo post!', userId: 1 },
+  { id: 2, descricao: 'Adorei ler isso!', userId: 2 },
+  { id: 3, descricao: 'Muito informativo. Obrigado por compartilhar!', userId: 3 },
+  { id: 4, descricao: 'Esse é um dos melhores posts que já li.', userId: 4 },
+  { id: 10, descricao: 'Esse post mudou minha perspectiva sobre o assunto. Incrível!', userId: 10 },
+
+]);
 const posts = reactive([]);
 
 const novoItem = ref({
@@ -177,7 +216,9 @@ const novoItem = ref({
   postagem: "",
   imagem: ""
 });
-
+onMounted(() => {
+  fetchComments();
+});
 onMounted(() => {
   fetchData(); 
 })
@@ -216,7 +257,14 @@ async function createPost(novoItem) {
     console.error('Erro ao criar uma nova postagem:', error);
   }
 }
-
+async function fetchComments() {
+  try {
+    const response = await axios.get(`${URL_SERVER}/comments?postId=${postId}`);
+    comments.value = response.data;
+  } catch (error) {
+    console.error('Erro ao buscar os comentários:', error);
+  }
+}
 
 function getRandomProfileImageURL() {
   const randomNumber = Math.floor(Math.random() * 100) + 1; // Gera um número aleatório de 1 a 100
@@ -291,4 +339,8 @@ async function fetchData() {
   h2{
     align-self: center;
   }
+  .link{
+    text-decoration: none;
+  }
+  .profile-card{margin-top:  120px;}
 </style>
