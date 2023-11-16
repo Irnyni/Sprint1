@@ -6,9 +6,7 @@ const mongoose = require('mongoose');
 const postsRouter = require('./app-backend/src/api/routes/posts');
 const app = express();
 const PORT = process.env.PORT || 5000;
-const Post = require('../Sprint1/app-backend/src/database/model/postModel');
-// Conectar ao MongoDB
- mongoose.connect('mongodb+srv://irnyni:123@banco1.wurjpjq.mongodb.net/b1');
+mongoose.connect('mongodb+srv://irnyni:123@banco1.wurjpjq.mongodb.net/b1');
 
 
 

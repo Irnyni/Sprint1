@@ -255,7 +255,7 @@ async function fetchData() {
 <style scoped>
 .profile-card {
   /* Aumenta o tamanho da foto de perfil */
-  --v-avatar-size: 440px; /* Ajuste o valor conforme necessário */
+  --v-avatar-size: 600px; /* /* Ajuste o valor conforme necessário */
 
   /* Aumenta o tamanho do título */
   font-size: 50px; /* Ajuste o valor conforme necessário */
