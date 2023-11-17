@@ -16,6 +16,10 @@
       <v-dialog id="modal-novo-item" variant="tonal">
         <template v-slot:activator="{ props }">
           <v-btn v-bind="props" text color="white">Criar post</v-btn>
+          <v-btn @click="" color="white" text>
+        <NuxtLink to="/newUser" class="link-no-bold">login</NuxtLink>
+
+      </v-btn>
         </template>
 
         <template v-slot:default="{ isActive }">

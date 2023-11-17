@@ -9,7 +9,7 @@
       </v-btn>
 
       <v-btn @click="openTabView()" color="white" text>
-        <NuxtLink to="/" class="link-no-bold">Perfil</NuxtLink>
+        <NuxtLink to="/" class="link-no-bold">Post</NuxtLink>
 
       </v-btn>
       <!-- Modal para inserir novo -->
@@ -139,7 +139,7 @@ export default {
         birthdate: '01/01/1990',
         bio: 'Entusiasta da tecnologia e amante de viagens.',
         posts: [
-          { id: 1, title: 'Minha Primeira Postagem', date: '10/10/2022' },
+          { id: 1, title: 'Minha Primeira Postagem', date: '10/10/2022' }, { id: 2, title: 'Minha segunda Postagem', date: '10/10/2022' }
           // Adicione mais postagens conforme necessário
         ],
       },

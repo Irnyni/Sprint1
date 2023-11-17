@@ -1,4 +1,4 @@
-const Post = require('../../database/model/postModel'); // Caminho correto para o modelo
+const Post = require('../../database/model/postModel'); 
 
 function getAllPosts(req, res) {
   Post.find()
