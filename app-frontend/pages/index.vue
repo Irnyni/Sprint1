@@ -105,26 +105,27 @@
           
 
 
-          <v-container fluid>
-    <v-col v-for="comment in comments" :key="comment.id">
-      <card-item :item="comment"></card-item>
-      <v-card
-        border
-        class="coment-card"
-        density="compact"
-        :prepend-avatar="profileImageURL"
-        subtitle="geek"
-        title="Mariana"
-        variant="text"
-      >
-        <p class="titulo">{{ comment.descricao }}</p>
-        <!-- Adicione os detalhes do comentário conforme necessário -->
-        <template v-slot:actions>
-          <v-btn color="primary" variant="text">Curtir</v-btn>
-        </template>
-      </v-card>
-    </v-col>
-  </v-container>
+          <!-- <v-container fluid>
+  <v-col v-for="comment in comments" :key="comment.id">
+    <card-item :item="comment"></card-item>
+    <v-card
+      border
+      class="coment-card"
+      density="compact"
+      :prepend-avatar="profileImageURL"
+      subtitle="geek"
+      title="Mariana"
+      variant="text"
+    >
+      <p class="titulo">{{ comment.commentText }}</p>
+    
+      <template v-slot:actions>
+        <v-btn color="primary" variant="text">Curtir</v-btn>
+      </template>
+    </v-card>
+  </v-col>
+</v-container> -->
+
 
 
 
@@ -155,12 +156,36 @@
 
         <v-container>
           <v-row>
-            <v-col v-for="item in posts" :key="posts.descricao">
-              <!-- Dentro do v-for, o filtro deve ser invocado como um método -->
-              <!-- <card-item v-bind:key="item.patrimonio" v-for="item in filterSearch(items, itemSearch)" -->
-              <card-item v-bind:item="item">
-              </card-item>
-            </v-col>
+<!-- Inside the v-col loop where you display posts -->
+<!-- Loop para exibir postagens -->
+<v-col v-for="post in posts" :key="post.id">
+  <!-- Exibir a postagem -->
+  <v-card>
+    <h2>{{ post.descricao }}</h2>
+    <v-img :src="post.imagem" height="500"></v-img>
+    <p>{{ post.postagem }}</p>
+    <!-- Adicionar botões de ação conforme necessário -->
+    <template v-slot:actions>
+      <v-btn color="primary" variant="text">Curtir</v-btn>
+      <v-btn color="primary" variant="text">Comentar</v-btn>
+    </template>
+  </v-card>
+
+  <!-- Loop para exibir comentários da postagem -->
+  <v-col v-for="comment in post.comments" :key="comment.id">
+    <!-- Exibir o comentário -->
+    <v-card>
+      <h2>{{ comment.commenterName }}</h2>
+      <p>{{ comment.commentText }}</p>
+      <!-- Adicionar botões de ação conforme necessário -->
+      <template v-slot:actions>
+        <v-btn color="primary" variant="text">Curtir</v-btn>
+      </template>
+    </v-card>
+  </v-col>
+</v-col>
+
+
           </v-row>
         </v-container>
         <template>
@@ -184,7 +209,7 @@
 
 <script setup lang="js">
 import { ref, onMounted, defineProps } from 'vue';
-import axios from 'axios';
+import axios from 'axios';  
 // ===== FETCH DATA =====
 const URL_SERVER = "http://localhost:5000";
 // https://stackoverflow.com/questions/75680934/nuxt3-nuxt-request-error-unhandled-500-fetch-failed-http-localhost#:~:text=%22dev%22%3A%20%22nuxt%20dev%20--host%200.0.0.0%22%20If%20the%20issue,an%20SSL%20issue%20or%20something%20with%20node%20v18
@@ -211,7 +236,6 @@ const comments = ref([
   { id: 3, descricao: 'Muito informativo. Obrigado por compartilhar!', userId: 3 },
   { id: 4, descricao: 'Esse é um dos melhores posts que já li.', userId: 4 },
   { id: 10, descricao: 'Esse post mudou minha perspectiva sobre o assunto. Incrível!', userId: 10 },
-
 ]);
 const posts = reactive([]);
 
@@ -263,12 +287,14 @@ async function createPost(novoItem) {
 }
 async function fetchComments() {
   try {
-    const response = await axios.get(`${URL_SERVER}/comments?postId=${postId}`);
+    const postId = 1; // Substitua 1 pelo ID do post específico para o qual deseja buscar os comentários
+    const response = await axios.get(`http://localhost:5000/comments/${postId}`);
     comments.value = response.data;
   } catch (error) {
     console.error('Erro ao buscar os comentários:', error);
   }
 }
+
 
 function getRandomProfileImageURL() {
   const randomNumber = Math.floor(Math.random() * 100) + 1; // Gera um número aleatório de 1 a 100
@@ -290,15 +316,41 @@ function updateItemList () {
     items.value = data;
   })
 }; 
+// async function fetchData() {
+//   try {
+//     const response = await axios.get('http://localhost:5000/posts');
+//     const serverPosts = response.data; 
+//     posts.splice(0, posts.length, ...serverPosts); 
+//   } catch (error) {
+//     console.error('Erro ao buscar os objetos:', error);
+//   }
+// }
 async function fetchData() {
   try {
-    const response = await axios.get('http://localhost:5000/posts');
-    const serverPosts = response.data; 
-    posts.splice(0, posts.length, ...serverPosts); 
+    const postsResponse = await axios.get('http://localhost:5000/posts');
+    const commentsResponse = await axios.get('http://localhost:5000/comments');
+
+    console.log('Posts:', postsResponse.data);
+    console.log('Comments:', commentsResponse.data);
+
+    // Atualizar o valor da variável reativa `posts`
+    posts.splice(0, posts.length, ...postsResponse.data);
+
+    // Atualizar o valor da variável reativa `comments`
+    comments.splice(0, comments.length, ...commentsResponse.data);
+    comments.value = commentsResponse.data;
+    // Adicione este log para verificar se `posts` e `comments` foram atualizados corretamente
+    console.log('Posts Atualizados:', posts);
+    console.log('Comments Atualizados:', comments);
   } catch (error) {
-    console.error('Erro ao buscar os objetos:', error);
+    console.error('Erro ao buscar os dados:', error);
   }
 }
+
+onMounted(() => {
+  fetchData();
+});
+
 
 
 
