@@ -68,15 +68,13 @@
 
     <!-- Conteúdo principal da página -->
     <v-main>
-      <div class="invent-table" v-if="tableView">
-  <v-container fluid>
 
-      <v-col v-for="item in posts" :key="item.descricao">
-  
-        <card-item :item="item"></card-item>
-       
-        <v-card
-            border
+        <v-container>
+          <v-row>
+
+<v-col v-for="post in posts" :key="post.id" class="postagens">
+  <v-card
+           
         
           
       class="profile-card" 
@@ -87,88 +85,20 @@
       title="Mariana"
       variant="text"
       
-          > 
-         <h2 class="titulo"> {{ item.descricao }}</h2>
-          
-
-          <v-img :src="item.imagem" height="500" class="imgg"></v-img>
-  
-          <v-card-text>
-              <p>   {{ item.postagem }}</p>
-           
-            </v-card-text>
-            <template v-slot:actions>
-              <v-btn color="primary" variant="text">Curtir</v-btn>
-              <v-btn color="primary" variant="text">Comentar</v-btn>
-            </template>
-          </v-card>
-          
-
-
-          <!-- <v-container fluid>
-  <v-col v-for="comment in comments" :key="comment.id">
-    <card-item :item="comment"></card-item>
-    <v-card
-      border
-      class="coment-card"
-      density="compact"
-      :prepend-avatar="profileImageURL"
-      subtitle="geek"
-      title="Mariana"
-      variant="text"
-    >
-      <p class="titulo">{{ comment.commentText }}</p>
-    
-      <template v-slot:actions>
-        <v-btn color="primary" variant="text">Curtir</v-btn>
-      </template>
-    </v-card>
-  </v-col>
-</v-container> -->
-
-
-
-
-          
-
-          
-      </v-col>
-  
-  </v-container>
- 
-</div>
-
-      <!-- Tabela do iventário -->
-      <div class="invent-table" v-if="tableView">
-   
-          <v-main>
-        <v-container fluid>
-          
-        
-        </v-container>
-        
-      </v-main>
-        
-       
-      </div>
-
-      <!-- Cards do iventário -->
-
-        <v-container>
-          <v-row>
-<!-- Inside the v-col loop where you display posts -->
-<!-- Loop para exibir postagens -->
-<v-col v-for="post in posts" :key="post.id">
-  <!-- Exibir a postagem -->
-  <v-card>
+          > </v-card>
+  <v-card class="cardpostagem">
     <h2>{{ post.descricao }}</h2>
-    <v-img :src="post.imagem" height="500"></v-img>
+    <v-img :src="post.imagem" ></v-img>
     <p>{{ post.postagem }}</p>
     <!-- Adicionar botões de ação conforme necessário -->
     <template v-slot:actions>
-      <v-btn color="primary" variant="text">Curtir</v-btn>
-      <v-btn color="primary" variant="text">Comentar</v-btn>
-    </template>
+    <v-btn color="primary" variant="text">Curtir</v-btn>
+    <!-- Adicione um campo de entrada de texto para o comentário -->
+    <!-- Adicione um botão para enviar o comentário -->
+    <v-btn @click="adicionarComentario(post._id, novoComentarioTexto)" color="primary">Adicionar Comentário</v-btn>
+    <!-- Adicione um botão para excluir a postagem -->
+    <v-btn @click="excluirPostagem(post._id)" color="red" variant="text">Excluir</v-btn>
+  </template>
   </v-card>
 
   <!-- Loop para exibir comentários da postagem -->
@@ -229,7 +159,7 @@ const perPage = ref(3);
 const url = ref('');
 const profileImageURL = getRandomProfileImageURL();
 const { postId } = defineProps(['postId']);
-
+const novoComentarioTexto = ref("");
 const comments = ref([
   { id: 1, descricao: 'Ótimo post!', userId: 1 },
   { id: 2, descricao: 'Adorei ler isso!', userId: 2 },
@@ -294,6 +224,21 @@ async function fetchComments() {
     console.error('Erro ao buscar os comentários:', error);
   }
 }
+async function excluirPostagem(postId) {
+  try {console.log('ID do post a ser excluído:', postId);
+
+    const response = await axios.delete(`${URL_SERVER}/posts/${postId}`);
+    if (response.status === 200) {
+      console.log('Postagem excluída com sucesso!');
+      // Atualize a lista de postagens após excluir a postagem
+      fetchData();
+    } else {
+      console.error('Erro ao excluir a postagem:', response);
+    }
+  } catch (error) {
+    console.error('Erro ao excluir a postagem:', error);
+  }
+}
 
 
 function getRandomProfileImageURL() {
@@ -350,7 +295,13 @@ async function fetchData() {
 onMounted(() => {
   fetchData();
 });
-
+async function adicionarComentario(postId, commentText) {
+  if (commentText.trim() !== "") {
+    await createComment(postId, commentText);
+    // Limpar o campo de texto após adicionar o comentário
+    novoComentarioTexto.value = "";
+  }
+}
 
 
 
@@ -399,4 +350,27 @@ onMounted(() => {
     text-decoration: none;
   }
   .profile-card{margin-top:  120px;}
+  .postagens{
+    display: flex;
+    flex-direction:column;
+    justify-content: space-around;
+    margin: 20px;
+    
+    
+
+
+
+
+  }
+  .cardpostagem{
+ display: flex;
+ flex-direction: column;
+
+
+width: 750px;
+height: auto;
+padding: 30px;
+margin: 30px;
+min-height: 700px;
+  }
 </style>
