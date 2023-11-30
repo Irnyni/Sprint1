@@ -12,6 +12,7 @@
       <v-btn @click="openTabView()" color="white" text>
         Posts
       </v-btn>
+      
       <!-- Modal para inserir novo -->
       <v-dialog id="modal-novo-item" variant="tonal">
         <template v-slot:activator="{ props }">
@@ -20,6 +21,7 @@
         <NuxtLink to="/newUser" class="link-no-bold">login</NuxtLink>
 
       </v-btn>
+      
         </template>
 
         <template v-slot:default="{ isActive }">
@@ -65,8 +67,41 @@
         </template>
       </v-dialog>
     </v-app-bar>
+    <v-dialog v-model="commentModalOpen" variant="tonal">
+  <template v-slot:activator="{ props }">
+    <v-btn v-bind="props" text color="primary">Adicionar Comentário</v-btn>
+  </template>
 
-    <!-- Conteúdo principal da página -->
+  <template v-slot:default="{ isActive }">
+    <v-card title="ADICIONAR COMENTÁRIO">
+      <v-container>
+ <v-form @submit.prevent="adicionarComentario">
+          <label class="mr-sm-2" for="input-comentario">Comentário:</label>
+          <v-textarea
+            id="input-comentario"
+            v-model="novoComentarioTexto"
+            class="mb-2 mr-sm-2 mb-sm-0"
+            placeholder="Escreva seu comentário"
+          ></v-textarea>
+
+          <v-divider></v-divider>
+
+          <div class="pa4">
+            <v-row>
+              <v-col>
+                <v-btn type="submit" color="blue" variant="elevated">Adicionar</v-btn>
+              </v-col>
+              <v-col>
+                <v-btn type="reset" color="red" variant="elevated" @click="commentModalOpen = false">Cancelar</v-btn>
+              </v-col>
+            </v-row>
+          </div>
+        </v-form>
+      </v-container>
+    </v-card>
+  </template>
+</v-dialog>
+
     <v-main>
 
         <v-container>
@@ -95,24 +130,24 @@
     <v-btn color="primary" variant="text">Curtir</v-btn>
     <!-- Adicione um campo de entrada de texto para o comentário -->
     <!-- Adicione um botão para enviar o comentário -->
-    <v-btn @click="adicionarComentario(post._id, novoComentarioTexto)" color="primary">Adicionar Comentário</v-btn>
+    <v-btn @click="openCommentModal(post._id)" color="primary">Adicionar Comentário</v-btn>
     <!-- Adicione um botão para excluir a postagem -->
     <v-btn @click="excluirPostagem(post._id)" color="red" variant="text">Excluir</v-btn>
   </template>
   </v-card>
 
   <!-- Loop para exibir comentários da postagem -->
-  <v-col v-for="comment in post.comments" :key="comment.id">
-    <!-- Exibir o comentário -->
-    <v-card>
-      <h2>{{ comment.commenterName }}</h2>
-      <p>{{ comment.commentText }}</p>
-      <!-- Adicionar botões de ação conforme necessário -->
-      <template v-slot:actions>
-        <v-btn color="primary" variant="text">Curtir</v-btn>
-      </template>
-    </v-card>
-  </v-col>
+  <v-col v-for="comment in comments[post.id]" :key="comment.id">
+  <!-- Exibir o comentário -->
+  <v-card>
+    <h2>{{ comment.commenterName }}</h2>
+    <p>{{ comment.commentText }}</p>
+    <!-- Adicionar botões de ação conforme necessário -->
+    <template v-slot:actions>
+      <v-btn color="primary" variant="text">Curtir</v-btn>
+    </template>
+  </v-card>
+</v-col>
 </v-col>
 
 
@@ -160,13 +195,16 @@ const url = ref('');
 const profileImageURL = getRandomProfileImageURL();
 const { postId } = defineProps(['postId']);
 const novoComentarioTexto = ref("");
-const comments = ref([
-  { id: 1, descricao: 'Ótimo post!', userId: 1 },
-  { id: 2, descricao: 'Adorei ler isso!', userId: 2 },
-  { id: 3, descricao: 'Muito informativo. Obrigado por compartilhar!', userId: 3 },
-  { id: 4, descricao: 'Esse é um dos melhores posts que já li.', userId: 4 },
-  { id: 10, descricao: 'Esse post mudou minha perspectiva sobre o assunto. Incrível!', userId: 10 },
-]);
+const comments = ref({});
+const commentModalOpen = ref(false);
+const currentPostId = ref(null);
+
+
+function openCommentModal(postId) {
+  commentModalOpen.value = true;
+  currentPostId.value = postId;
+}
+
 const posts = reactive([]);
 
 const novoItem = ref({
@@ -261,15 +299,7 @@ function updateItemList () {
     items.value = data;
   })
 }; 
-// async function fetchData() {
-//   try {
-//     const response = await axios.get('http://localhost:5000/posts');
-//     const serverPosts = response.data; 
-//     posts.splice(0, posts.length, ...serverPosts); 
-//   } catch (error) {
-//     console.error('Erro ao buscar os objetos:', error);
-//   }
-// }
+
 async function fetchData() {
   try {
     const postsResponse = await axios.get('http://localhost:5000/posts');
@@ -282,8 +312,15 @@ async function fetchData() {
     posts.splice(0, posts.length, ...postsResponse.data);
 
     // Atualizar o valor da variável reativa `comments`
-    comments.splice(0, comments.length, ...commentsResponse.data);
-    comments.value = commentsResponse.data;
+    comments.value = {};
+
+// Adicione cada conjunto de comentários à chave correspondente
+commentsResponse.data.forEach(comment => {
+  if (!comments.value[comment.postId]) {
+    comments.value[comment.postId] = [];
+  }
+  comments.value[comment.postId].push(comment);
+});
     // Adicione este log para verificar se `posts` e `comments` foram atualizados corretamente
     console.log('Posts Atualizados:', posts);
     console.log('Comments Atualizados:', comments);
@@ -295,14 +332,43 @@ async function fetchData() {
 onMounted(() => {
   fetchData();
 });
-async function adicionarComentario(postId, commentText) {
-  if (commentText.trim() !== "") {
-    await createComment(postId, commentText);
-    // Limpar o campo de texto após adicionar o comentário
-    novoComentarioTexto.value = "";
+
+async function adicionarComentario(postId) {
+  try {
+    const commentText = novoComentarioTexto.value;
+
+    if (postId && commentText.trim() !== "") {
+      const comment = {
+        commenterName: 'Nome do Comentador', // Substitua pelo nome do usuário atual
+        commentText,
+        postId, // Adicione o ID da postagem ao comentário
+      };
+
+      const response = await axios.post(`${URL_SERVER}/comments`, comment);
+
+      if (response.status === 201) {
+        console.log('Novo comentário adicionado com sucesso!');
+        fetchComments(); // Atualiza os comentários após adicionar um novo
+      } else {
+        console.error('Erro ao adicionar um novo comentário:', response);
+      }
+    } else {
+      console.error('ID do post ou texto do comentário inválido.');
+    }
+
+    commentModalOpen.value = false; // Fecha o modal após adicionar o comentário
+  } catch (error) {
+    console.error('Erro ao adicionar um novo comentário:', error);
   }
 }
 
+
+
+
+function fetchCommentsForPost(postId) {
+  // Implemente a lógica para buscar os comentários específicos para a postagem com o ID `postId`
+  // Use a rota `/comments/posts/:postId` ou a rota adequada em seu backend
+}
 
 
 </script>
@@ -373,4 +439,7 @@ padding: 30px;
 margin: 30px;
 min-height: 700px;
   }
+
+   
+  
 </style>
