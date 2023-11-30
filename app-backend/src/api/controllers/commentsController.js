@@ -1,26 +1,45 @@
-const Comment = require('../../database/model/commentModel'); // Importa o modelo de comentários
+// commentsController.js no lado do servidor
 
-function getAllCommentsForPost(req, res) {
+const Comment = require('../../database/model/commentModel'); // Importe o modelo adequado se necessário
+
+const getAllCommentsForPost = async (req, res) => {
   const postId = req.params.postId;
 
-  Comment.find({ postId }) // Encontra todos os comentários associados a um post específico
-    .then(comments => res.json(comments))
-    .catch(error => res.status(500).json({ error: 'Erro ao buscar comentários', details: error }));
-}
+  try {
+    const comments = await Comment.find({ postId });
+    res.json(comments);
+  } catch (error) {
+    console.error('Erro ao buscar os comentários para o post:', error);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+};
 
-function createCommentForPost(req, res) {
+const createCommentForPost = async (req, res) => {
   const postId = req.params.postId;
   const { commenterName, commentText } = req.body;
 
-  const newComment = new Comment({
-    postId,
-    commenterName,
-    commentText,
-  });
+  try {
+    // Crie um novo comentário usando o modelo Comment e os dados fornecidos
+    const newComment = new Comment({
+      postId,
+      commenterName,
+      commentText,
+    });
 
-  newComment.save()
-    .then(comment => res.status(201).json({ message: 'Comentário adicionado com sucesso', comment }))
-    .catch(error => res.status(500).json({ error: 'Erro ao criar comentário', details: error }));
-}
+    // Salve o novo comentário no banco de dados
+    const savedComment = await newComment.save();
 
-module.exports = { getAllCommentsForPost, createCommentForPost };
+    res.status(201).json(savedComment);
+  } catch (error) {
+    console.error('Erro ao criar um novo comentário:', error);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+};
+
+// Outros métodos do controlador conforme necessário
+
+module.exports = {
+  getAllCommentsForPost,
+  createCommentForPost,
+  // Outros métodos exportados
+};

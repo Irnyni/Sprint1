@@ -75,7 +75,9 @@
   <template v-slot:default="{ isActive }">
     <v-card title="ADICIONAR COMENTÁRIO">
       <v-container>
- <v-form @submit.prevent="adicionarComentario(currentPostId)" v-if="currentPostId">
+        <v-form @submit.prevent="adicionarComentario($event)">
+          <v-btn @click="openCommentModal(post.id)" color="primary">Add Comment</v-btn>
+
           <label class="mr-sm-2" for="input-comentario">Comentário:</label>
           <v-textarea
             id="input-comentario"
@@ -138,16 +140,14 @@
 
   <!-- Loop para exibir comentários da postagem -->
   <v-col v-for="comment in comments[post.id]" :key="comment.id">
-  <!-- Exibir o comentário -->
+  <!-- Display the comment content -->
   <v-card>
     <h2>{{ comment.commenterName }}</h2>
     <p>{{ comment.commentText }}</p>
-    <!-- Adicionar botões de ação conforme necessário -->
-    <template v-slot:actions>
-      <v-btn color="primary" variant="text">Curtir</v-btn>
-    </template>
+    <!-- Add any additional actions/buttons for comments if needed -->
   </v-card>
 </v-col>
+
 </v-col>
 
 
@@ -342,35 +342,40 @@ async function fetchCommentsForPost(postId) {
 }
 
 
-async function adicionarComentario(event) {
+async function adicionarComentario() {
   try {
+    const postId = currentPostId.value;
     const commentText = novoComentarioTexto.value;
 
-    if (event && event.currentTarget && commentText.trim() !== "") {
-      const postId = event.currentTarget.dataset.postId; // Extraia o ID da postagem do evento
-
-      const comment = {
-        commenterName: 'Nome do Comentador', // Substitua pelo nome do usuário atual
-        commentText,
-      };
-
-      const response = await axios.post(`${URL_SERVER}/comments/${postId}`, comment);
-
-      if (response.status === 201) {
-        console.log('Novo comentário adicionado com sucesso!');
-        fetchCommentsForPost(postId); // Atualiza os comentários específicos para o post após adicionar um novo
-      } else {
-        console.error('Erro ao adicionar um novo comentário:', response);
-      }
-    } else {
-      console.error('ID do post ou texto do comentário inválido.');
+    // Validar dados antes da solicitação
+    if (!postId || !commentText.trim()) {
+      console.error('Invalid postId or empty commentText.');
+      return;
     }
 
-    commentModalOpen.value = false; // Fecha o modal após adicionar o comentário
+    // Fazer uma chamada à API para adicionar o comentário
+    const response = await axios.post(`${URL_SERVER}/comments/${postId}`, {
+      commenterName: 'Username',
+      commentText,
+    });
+
+    if (response.status === 201) {
+      console.log('Comment added successfully!');
+      // Atualizar os comentários para a postagem atual
+      fetchCommentsForPost(postId);
+    } else {
+      console.error('Error adding comment:', response);
+    }
+
+    // Fechar o modal de comentários
+    commentModalOpen.value = false;
   } catch (error) {
-    console.error('Erro ao adicionar um novo comentário:', error);
+    console.error('Error adding comment:', error.message || error);
   }
 }
+
+
+
 
 
 

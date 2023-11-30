@@ -1,16 +1,13 @@
-// routes.js
+
 
 const express = require('express');
+const router = express.Router();
 const commentsController = require('../controllers/commentsController');
 
-const router = express.Router();
+// Rota para criar um novo comentário
+router.post('/', commentsController.createCommentForPost);
 
-// Rota para buscar todos os comentários para uma postagem específica
+// Rota para obter todos os comentários para um post
 router.get('/', commentsController.getAllCommentsForPost);
-
-// Rota para criar um novo comentário para uma postagem específica
-router.post('/comments', commentsController.createCommentForPost);
-
-// Adicione outras rotas conforme necessário
 
 module.exports = router;
