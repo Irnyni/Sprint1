@@ -75,7 +75,7 @@
   <template v-slot:default="{ isActive }">
     <v-card title="ADICIONAR COMENTÁRIO">
       <v-container>
- <v-form @submit.prevent="adicionarComentario">
+ <v-form @submit.prevent="adicionarComentario(currentPostId)" v-if="currentPostId">
           <label class="mr-sm-2" for="input-comentario">Comentário:</label>
           <v-textarea
             id="input-comentario"
@@ -332,23 +332,33 @@ commentsResponse.data.forEach(comment => {
 onMounted(() => {
   fetchData();
 });
+async function fetchCommentsForPost(postId) {
+  try {
+    const response = await axios.get(`${URL_SERVER}/comments/posts/${postId}`);
+    comments.value[postId] = response.data;
+  } catch (error) {
+    console.error('Erro ao buscar os comentários para o post:', error);
+  }
+}
 
-async function adicionarComentario(postId) {
+
+async function adicionarComentario(event) {
   try {
     const commentText = novoComentarioTexto.value;
 
-    if (postId && commentText.trim() !== "") {
+    if (event && event.currentTarget && commentText.trim() !== "") {
+      const postId = event.currentTarget.dataset.postId; // Extraia o ID da postagem do evento
+
       const comment = {
         commenterName: 'Nome do Comentador', // Substitua pelo nome do usuário atual
         commentText,
-        postId, // Adicione o ID da postagem ao comentário
       };
 
-      const response = await axios.post(`${URL_SERVER}/comments`, comment);
+      const response = await axios.post(`${URL_SERVER}/comments/${postId}`, comment);
 
       if (response.status === 201) {
         console.log('Novo comentário adicionado com sucesso!');
-        fetchComments(); // Atualiza os comentários após adicionar um novo
+        fetchCommentsForPost(postId); // Atualiza os comentários específicos para o post após adicionar um novo
       } else {
         console.error('Erro ao adicionar um novo comentário:', response);
       }
@@ -365,10 +375,11 @@ async function adicionarComentario(postId) {
 
 
 
-function fetchCommentsForPost(postId) {
-  // Implemente a lógica para buscar os comentários específicos para a postagem com o ID `postId`
-  // Use a rota `/comments/posts/:postId` ou a rota adequada em seu backend
-}
+
+
+
+
+
 
 
 </script>

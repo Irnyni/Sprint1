@@ -1,32 +1,37 @@
 const Post = require('../../database/model/postModel');
 
-function getAllPosts(req, res) {
-  Post.find()
-    .then(posts => res.json(posts))
-    .catch(error => res.status(500).json({ error: 'Erro ao buscar posts', details: error }));
+async function getAllPosts(req, res) {
+  try {
+    const posts = await Post.find();
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar posts', details: error.message });
+  }
 }
 
-function createPost(req, res) {
-  const { descricao, postagem, imagem } = req.body;
-
-  const newPost = new Post({ descricao, postagem, imagem });
-
-  newPost.save()
-    .then(post => res.status(201).json({ message: 'Item criado com sucesso', post }))
-    .catch(error => res.status(500).json({ error: 'Erro ao criar post', details: error }));
+async function createPost(req, res) {
+  try {
+    const { descricao, postagem, imagem } = req.body;
+    const newPost = new Post({ descricao, postagem, imagem });
+    const post = await newPost.save();
+    res.status(201).json({ message: 'Item criado com sucesso', post });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao criar post', details: error.message });
+  }
 }
-function deletePost(req, res) {
+
+async function deletePost(req, res) {
   const postId = req.params.id;
 
-  Post.findByIdAndDelete(postId)
-    .then((deletedPost) => {
-      if (!deletedPost) {
-        return res.status(404).json({ error: 'Postagem não encontrada' });
-      }
-      res.json({ message: 'Postagem excluída com sucesso', deletedPost });
-    })
-    .catch((error) => {
-      res.status(500).json({ error: 'Erro ao excluir postagem', details: error });
-    });
+  try {
+    const deletedPost = await Post.findByIdAndDelete(postId);
+    if (!deletedPost) {
+      return res.status(404).json({ error: 'Postagem não encontrada' });
+    }
+    res.json({ message: 'Postagem excluída com sucesso', deletedPost });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao excluir postagem', details: error.message });
+  }
 }
+
 module.exports = { getAllPosts, createPost, deletePost };

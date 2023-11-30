@@ -6,7 +6,7 @@ const commentsController = require('../controllers/commentsController');
 const router = express.Router();
 
 // Rota para buscar todos os comentários para uma postagem específica
-router.get('/', commentsController.getCommentsForPost);
+router.get('/', commentsController.getAllCommentsForPost);
 
 // Rota para criar um novo comentário para uma postagem específica
 router.post('/comments', commentsController.createCommentForPost);

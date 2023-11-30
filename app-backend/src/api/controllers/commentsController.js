@@ -1,11 +1,9 @@
-// commentsController.js
-
-const Comment = require('../../database/model/commentModel');
+const Comment = require('../../database/model/commentModel'); // Importa o modelo de comentários
 
 function getAllCommentsForPost(req, res) {
   const postId = req.params.postId;
 
-  Comment.find({ postId })
+  Comment.find({ postId }) // Encontra todos os comentários associados a um post específico
     .then(comments => res.json(comments))
     .catch(error => res.status(500).json({ error: 'Erro ao buscar comentários', details: error }));
 }
@@ -25,13 +23,4 @@ function createCommentForPost(req, res) {
     .catch(error => res.status(500).json({ error: 'Erro ao criar comentário', details: error }));
 }
 
-// Adicione a função para buscar comentários de uma postagem específica
-function getCommentsForPost(req, res) {
-  const postId = req.params.postId;
-
-  Comment.find({ postId })
-    .then(comments => res.json(comments))
-    .catch(error => res.status(500).json({ error: 'Erro ao buscar comentários para a postagem', details: error }));
-}
-
-module.exports = { getAllCommentsForPost, createCommentForPost, getCommentsForPost };
+module.exports = { getAllCommentsForPost, createCommentForPost };
