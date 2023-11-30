@@ -1,9 +1,9 @@
 // commentsController.js no lado do servidor
 
 const Comment = require('../../database/model/commentModel'); // Importe o modelo adequado se necessário
-
 const getAllCommentsForPost = async (req, res) => {
   const postId = req.params.postId;
+  console.log('Post ID:', postId);
 
   try {
     const comments = await Comment.find({ postId });

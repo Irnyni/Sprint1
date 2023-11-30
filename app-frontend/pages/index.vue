@@ -336,14 +336,18 @@ async function fetchCommentsForPost(postId) {
   try {
     const response = await axios.get(`${URL_SERVER}/comments/posts/${postId}`);
     comments.value[postId] = response.data;
+    console.log('Comentários para o post', postId, ':', response.data);
   } catch (error) {
     console.error('Erro ao buscar os comentários para o post:', error);
   }
 }
 
 
+
 async function adicionarComentario() {
+
   try {
+    console.log('Comentários no Vue:', comments);
     const postId = currentPostId.value;
     const commentText = novoComentarioTexto.value;
 
