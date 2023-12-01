@@ -12,16 +12,16 @@
       <v-btn @click="openTabView()" color="white" text>
         Posts
       </v-btn>
-      
-      <!-- Modal para inserir novo -->
+
+
       <v-dialog id="modal-novo-item" variant="tonal">
         <template v-slot:activator="{ props }">
           <v-btn v-bind="props" text color="white">Criar post</v-btn>
           <v-btn @click="" color="white" text>
-        <NuxtLink to="/newUser" class="link-no-bold">login</NuxtLink>
+            <NuxtLink to="/newUser" class="link-no-bold">login</NuxtLink>
 
-      </v-btn>
-      
+          </v-btn>
+
         </template>
 
         <template v-slot:default="{ isActive }">
@@ -29,26 +29,14 @@
             <v-container>
               <v-form v-on:submit.prevent="createPost(novoItem)">
                 <label class="mr-sm-2" for="input-descricao">Descrição:</label>
-                <v-text-field
-                  id="input-descricao"
-                  v-model="novoItem.descricao"
-                  class="mb-2 mr-sm-2 mb-sm-0"
-                  placeholder="Insira a descrição do seu post"
-                ></v-text-field>
+                <v-text-field id="input-descricao" v-model="novoItem.descricao" class="mb-2 mr-sm-2 mb-sm-0"
+                  placeholder="Insira a descrição do seu post"></v-text-field>
 
                 <label class="mr-sm-2" for="input-texto">Post:</label>
-                <v-textarea
-                  id="post"
-                  v-model="novoItem.postagem"
-                  class="mb-2 mr-sm-2 mb-sm-0"
-                  placeholder="Escreva seu post"
-                ></v-textarea>
-                <v-text-field
-                  id="input-capa"
-                  v-model="novoItem.imagem"
-                  class="mb-2 mr-sm-2 mb-sm-0"
-                  placeholder="link da imagem"
-                ></v-text-field>
+                <v-textarea id="post" v-model="novoItem.postagem" class="mb-2 mr-sm-2 mb-sm-0"
+                  placeholder="Escreva seu post"></v-textarea>
+                <v-text-field id="input-capa" v-model="novoItem.imagem" class="mb-2 mr-sm-2 mb-sm-0"
+                  placeholder="link da imagem"></v-text-field>
                 <v-divider></v-divider>
 
                 <div class="pa4">
@@ -68,120 +56,101 @@
       </v-dialog>
     </v-app-bar>
     <v-dialog v-model="commentModalOpen" variant="tonal">
-  <template v-slot:activator="{ props }">
-    <v-btn v-bind="props" text color="primary">Adicionar Comentário</v-btn>
-  </template>
+      <template v-slot:activator="{ props }">
+        <v-btn v-bind="props" text color="primary">Adicionar Comentário</v-btn>
+      </template>
 
-  <template v-slot:default="{ isActive }">
-    <v-card title="ADICIONAR COMENTÁRIO">
-      <v-container>
-        <v-form @submit.prevent="adicionarComentario($event)">
-          <v-btn @click="openCommentModal(post.id)" color="primary">Add Comment</v-btn>
+      <template v-slot:default="{ isActive }">
+        <v-card title="ADICIONAR COMENTÁRIO">
+          <v-container>
+            <v-form @submit.prevent="adicionarComentario($event)">
 
-          <label class="mr-sm-2" for="input-comentario">Comentário:</label>
-          <v-textarea
-            id="input-comentario"
-            v-model="novoComentarioTexto"
-            class="mb-2 mr-sm-2 mb-sm-0"
-            placeholder="Escreva seu comentário"
-          ></v-textarea>
 
-          <v-divider></v-divider>
+              <label class="mr-sm-2" for="input-comentario">Comentário:</label>
+              <v-textarea id="input-comentario" v-model="novoComentarioTexto" class="mb-2 mr-sm-2 mb-sm-0"
+                placeholder="Escreva seu comentário"></v-textarea>
 
-          <div class="pa4">
-            <v-row>
-              <v-col>
-                <v-btn type="submit" color="blue" variant="elevated">Adicionar</v-btn>
-              </v-col>
-              <v-col>
-                <v-btn type="reset" color="red" variant="elevated" @click="commentModalOpen = false">Cancelar</v-btn>
-              </v-col>
-            </v-row>
-          </div>
-        </v-form>
-      </v-container>
-    </v-card>
-  </template>
-</v-dialog>
+              <v-divider></v-divider>
+
+              <div class="pa4">
+                <v-row>
+                  <v-col>
+                    <v-btn type="submit" color="blue" variant="elevated">Adicionar</v-btn>
+                  </v-col>
+                  <v-col>
+                    <v-btn type="reset" color="red" variant="elevated" @click="commentModalOpen = false">Cancelar</v-btn>
+                  </v-col>
+                </v-row>
+              </div>
+            </v-form>
+          </v-container>
+        </v-card>
+      </template>
+    </v-dialog>
 
     <v-main>
 
-        <v-container>
-          <v-row>
+      <v-container>
+        <v-row>
 
-<v-col v-for="post in posts" :key="post.id" class="postagens">
-  <v-card
-           
-        
-          
-      class="profile-card" 
-      density="compact"
-    
-      :prepend-avatar="profileImageURL"
-      subtitle="geek"
-      title="Mariana"
-      variant="text"
-      
-          > </v-card>
-  <v-card class="cardpostagem">
-    <h2>{{ post.descricao }}</h2>
-    <v-img :src="post.imagem" ></v-img>
-    <p>{{ post.postagem }}</p>
-    <!-- Adicionar botões de ação conforme necessário -->
-    <template v-slot:actions>
-    <v-btn color="primary" variant="text">Curtir</v-btn>
-    <!-- Adicione um campo de entrada de texto para o comentário -->
-    <!-- Adicione um botão para enviar o comentário -->
-    <v-btn @click="openCommentModal(post._id)" color="primary">Adicionar Comentário</v-btn>
-    <!-- Adicione um botão para excluir a postagem -->
-    <v-btn @click="excluirPostagem(post._id)" color="red" variant="text">Excluir</v-btn>
-  </template>
-  </v-card>
+          <v-col v-for="post in posts" :key="post.id" class="postagens">
+            <v-card class="profile-card" density="compact" :prepend-avatar="profileImageURL" subtitle="geek"
+              title="Mariana" variant="text"> </v-card>
+            <v-card class="cardpostagem">
+              <h2>{{ post.descricao }}</h2>
+              <v-img :src="post.imagem"></v-img>
+              <p>{{ post.postagem }}</p>
 
-  <!-- Loop para exibir comentários da postagem -->
-  <v-col v-for="comment in comments[post.id]" :key="comment.id">
-  <!-- Display the comment content -->
-  <v-card>
-    <h2>{{ comment.commenterName }}</h2>
-    <p>{{ comment.commentText }}</p>
-    <!-- Add any additional actions/buttons for comments if needed -->
-  </v-card>
-</v-col>
+              <template v-slot:actions>
+                <v-btn color="primary" variant="text">Curtir</v-btn>
 
-</v-col>
+                <v-btn @click="openCommentModal(post._id)" color="primary">Adicionar Comentário</v-btn>
+
+                <v-btn @click="excluirPostagem(post._id)" color="red" variant="text">Excluir</v-btn>
+              </template>
+            </v-card>
+
+            <!-- comentarios!!! -->
+            <v-col v-for="comment in comments[post._id]" :key="comment._id">
+
+              <v-card>
+                <h2>{{ comment.commenterName }}</h2>
+                <p>{{ comment.commentText }}</p>
+
+              </v-card>
+            </v-col>
+
+          </v-col>
 
 
-          </v-row>
-        </v-container>
-        <template>
-  <div class="invent-cards" v-if="cardView">
-  <v-container>
-    <v-row>
-      <v-col v-for="item in items" :key="item.id">
-        <card-item :item="item"></card-item>
-        <div>{{ item.descricao }}</div>
-      </v-col>
-    </v-row>
-  </v-container>
-</div>
+        </v-row>
+      </v-container>
+      <template>
+        <div class="invent-cards" v-if="cardView">
+          <v-container>
+            <v-row>
+              <v-col v-for="item in items" :key="item.id">
+                <card-item :item="item"></card-item>
+                <div>{{ item.descricao }}</div>
+              </v-col>
+            </v-row>
+          </v-container>
+        </div>
 
-</template>
+      </template>
 
-    
+
     </v-main>
   </div>
 </template>
 
 <script setup lang="js">
 import { ref, onMounted, defineProps } from 'vue';
-import axios from 'axios';  
+import axios from 'axios';
 // ===== FETCH DATA =====
 const URL_SERVER = "http://localhost:5000";
-// https://stackoverflow.com/questions/75680934/nuxt3-nuxt-request-error-unhandled-500-fetch-failed-http-localhost#:~:text=%22dev%22%3A%20%22nuxt%20dev%20--host%200.0.0.0%22%20If%20the%20issue,an%20SSL%20issue%20or%20something%20with%20node%20v18
-// https://nuxt.com/docs/api/composables/use-async-data
-// https://nuxt.com/docs/api/utils/dollarfetch
-const { data } = await useAsyncData('', () => $fetch(URL_SERVER))
-const items = reactive(data.value);
+// const { data } = await useAsyncData('', () => $fetch(URL_SERVER))
+// const items = reactive(data.value);
 
 // ===== DATA ======
 const show = ref(false);
@@ -206,18 +175,21 @@ function openCommentModal(postId) {
 }
 
 const posts = reactive([]);
-
+const commenys = reactive([]);
 const novoItem = ref({
   descricao: "",
   postagem: "",
   imagem: ""
 });
+
 onMounted(() => {
   fetchComments();
 });
+
 onMounted(() => {
-  fetchData(); 
+  fetchData();
 })
+
 console.log(posts);
 
 async function createPost(novoItem) {
@@ -237,10 +209,10 @@ async function createPost(novoItem) {
       novoItem.postagem = "";
       novoItem.imagem = "";
 
-     
+
       console.log('Nova postagem criada com sucesso!');
     } else {
-     
+
       console.error('Erro ao criar uma nova postagem:', response);
     }
     // Limpa o formulário ou atualiza a lista após a postagem ser criada com sucesso
@@ -253,6 +225,7 @@ async function createPost(novoItem) {
     console.error('Erro ao criar uma nova postagem:', error);
   }
 }
+
 async function fetchComments() {
   try {
     const postId = 1; // Substitua 1 pelo ID do post específico para o qual deseja buscar os comentários
@@ -262,8 +235,10 @@ async function fetchComments() {
     console.error('Erro ao buscar os comentários:', error);
   }
 }
+
 async function excluirPostagem(postId) {
-  try {console.log('ID do post a ser excluído:', postId);
+  try {
+    console.log('ID do post a ser excluído:', postId);
 
     const response = await axios.delete(`${URL_SERVER}/posts/${postId}`);
     if (response.status === 200) {
@@ -283,44 +258,49 @@ function getRandomProfileImageURL() {
   const randomNumber = Math.floor(Math.random() * 100) + 1; // Gera um número aleatório de 1 a 100
   return `https://randomuser.me/api/portraits/women/${randomNumber}.jpg`;
 }
-function openCardView () {
- 
+function openCardView() {
+
   cardView.value = true;
   tableView.value = false;
 };
 
-function openTabView () {
+function openTabView() {
   cardView.value = false;
   tableView.value = true;
 }
 
-function updateItemList () {
+function updateItemList() {
   $fetch(URL_SERVER + 'postagem').then(data => {
     items.value = data;
   })
-}; 
+};
 
 async function fetchData() {
   try {
     const postsResponse = await axios.get('http://localhost:5000/posts');
     const commentsResponse = await axios.get('http://localhost:5000/comments');
+    
+    for(const post of postsResponse.data){
+      console.log(post._id);
+      await fetchCommentsForPost(post._id);
+    }
 
     console.log('Posts:', postsResponse.data);
-    console.log('Comments:', commentsResponse.data);
+    console.log('Comments:', comments.value);
 
     // Atualizar o valor da variável reativa `posts`
     posts.splice(0, posts.length, ...postsResponse.data);
 
     // Atualizar o valor da variável reativa `comments`
-    comments.value = {};
+    // comments.value = {};
 
-// Adicione cada conjunto de comentários à chave correspondente
-commentsResponse.data.forEach(comment => {
-  if (!comments.value[comment.postId]) {
-    comments.value[comment.postId] = [];
-  }
-  comments.value[comment.postId].push(comment);
-});
+    // Adicione cada conjunto de comentários à chave correspondente
+    // commentsResponse.data.forEach(comment => {
+    //   if (!comments.value[comment.postId]) {
+    //     comments.value[comment.postId] = [];
+    //   }
+    //   comments.value[comment.postId].push(comment);
+    // });
     // Adicione este log para verificar se `posts` e `comments` foram atualizados corretamente
     console.log('Posts Atualizados:', posts);
     console.log('Comments Atualizados:', comments);
@@ -329,11 +309,13 @@ commentsResponse.data.forEach(comment => {
   }
 }
 
-onMounted(() => {
-  fetchData();
-});
+// onMounted(() => {
+//   fetchData();
+// });
+
 async function fetchCommentsForPost(postId) {
   try {
+    console.log("Server: " + `${URL_SERVER}/comments/posts/${postId}`);
     const response = await axios.get(`${URL_SERVER}/comments/posts/${postId}`);
     comments.value[postId] = response.data;
     console.log('Comentários para o post', postId, ':', response.data);
@@ -396,21 +378,26 @@ async function adicionarComentario() {
 <style scoped>
 .profile-card {
   /* Aumenta o tamanho da foto de perfil */
-  --v-avatar-size: 600px; /* /* Ajuste o valor conforme necessário */
+  --v-avatar-size: 600px;
+  /* /* Ajuste o valor conforme necessário */
 
   /* Aumenta o tamanho do título */
-  font-size: 50px; /* Ajuste o valor conforme necessário */
+  font-size: 50px;
+  /* Ajuste o valor conforme necessário */
 }
 
 /* Aumenta o tamanho do subtítulo */
 .profile-card .v-subtitle {
-  font-size: 50px; /* Ajuste o valor conforme necessário */
+  font-size: 50px;
+  /* Ajuste o valor conforme necessário */
 }
 
 /* Aumenta o tamanho do texto do cartão */
 .profile-card .v-card-text {
-  font-size: 20px; /* Ajuste o valor conforme necessário */
+  font-size: 20px;
+  /* Ajuste o valor conforme necessário */
 }
+
 .invent-table {
   padding: 0 100px;
   margin: 0 auto;
@@ -420,46 +407,59 @@ async function adicionarComentario() {
   padding: 0px 100px;
   margin: 20px auto;
 }
+
 .link-no-bold {
   font-weight: normal;
-  color: white; /* Remove o negrito */
+  color: white;
+  /* Remove o negrito */
 }
-.imgg{
+
+.imgg {
   margin: 70px;
-  }
-  .profile-card{display: flex;flex-direction: column;  
-  justify-content: center;line-height:20px;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;}
-  h2{
-    align-self: center;
-  }
-  .link{
-    text-decoration: none;
-  }
-  .profile-card{margin-top:  120px;}
-  .postagens{
-    display: flex;
-    flex-direction:column;
-    justify-content: space-around;
-    margin: 20px;
-    
-    
+}
+
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 20px;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+h2 {
+  align-self: center;
+}
+
+.link {
+  text-decoration: none;
+}
+
+.profile-card {
+  margin-top: 120px;
+}
+
+.postagens {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  margin: 20px;
 
 
 
 
-  }
-  .cardpostagem{
- display: flex;
- flex-direction: column;
 
 
-width: 750px;
-height: auto;
-padding: 30px;
-margin: 30px;
-min-height: 700px;
-  }
+}
 
-   
-  
+.cardpostagem {
+  display: flex;
+  flex-direction: column;
+
+
+  width: 750px;
+  height: auto;
+  padding: 30px;
+  margin: 30px;
+  min-height: 700px;
+}
 </style>
