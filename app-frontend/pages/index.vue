@@ -89,6 +89,12 @@
     </v-dialog>
 
     <v-main>
+<div class="all">
+
+
+
+
+
 
       <v-container>
         <v-row>
@@ -111,9 +117,11 @@
             </v-card>
 
             <!-- comentarios!!! -->
-            <v-col v-for="comment in comments[post._id]" :key="comment._id">
-
+            <v-col v-for="comment in comments[post._id]" :key="comment._id" class="coments">
+  <v-card class="profile-card" density="compact" :prepend-avatar="profileImageURL" subtitle="geek"
+              title="Mariana" variant="text"> </v-card>
               <v-card>
+                
                 <h2>{{ comment.commenterName }}</h2>
                 <p>{{ comment.commentText }}</p>
 
@@ -125,6 +133,7 @@
 
         </v-row>
       </v-container>
+    </div>
       <template>
         <div class="invent-cards" v-if="cardView">
           <v-container>
@@ -461,5 +470,18 @@ h2 {
   padding: 30px;
   margin: 30px;
   min-height: 700px;
+}
+.coments{
+
+  height: 200px;
+  width: 70%;
+}
+.v-col.postagens{
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  padding-bottom: 300px;
+ 
+
 }
 </style>
