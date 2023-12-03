@@ -479,9 +479,13 @@ h2 {
 .v-col.postagens{
   display: flex;
   justify-content: center;
-  align-items: start;
   padding-bottom: 300px;
  
 
 }
+
+.v-col.coments{
+  height: 150px;
+}
+
 </style>

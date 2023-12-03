@@ -1,21 +1,85 @@
 <template>
-    <v-dialog id="modal-novo-perfil" variant="tona2">
-      <template v-slot:activator="{ props }">
-        <v-btn v-bind="props" text color="white">Criar novo perfil</v-btn>
-      </template>
-  
-      <template v-slot:default="{ isActive }">
+  <v-container>
+
+    
+    <!-- Navegação -->
+    <v-app-bar :elevation="50" color="black" dark>
+      <v-app-bar-title class="ml-7">GeekStation</v-app-bar-title>
+
+      <!-- ... outros itens de navegação ... -->
+
+      <!-- Botão para abrir o modal de criação de novo perfil -->
+      
+      <v-btn @click="openCreateProfileModal" text color="white">Criar novo perfil</v-btn>
+      
+      <!-- Botão para abrir o modal de login -->
+      <v-btn @click="openLoginModal" text color="white">Login</v-btn>
+
+      <!-- Modal para criar novo perfil -->
+      <v-dialog v-model="isCreateProfileModalOpen" variant="tona2">
+        <!-- ... conteúdo do modal de criação de novo perfil ... -->
+      </v-dialog>
+
+      <!-- Modal para login -->
+      <v-dialog v-model="isLoginModalOpen" variant="tona2">
+        <v-card title="FAÇA LOGIN">
+          <v-container>
+            <v-form v-on:submit.prevent="login">
+              <label class="mr-sm-2" for="input-username">Nome de usuário:</label>
+              <v-text-field
+                id="input-username"
+                v-model="loginForm.username"
+                class="mb-2 mr-sm-2 mb-sm-0"
+                placeholder="Insira seu nome de usuário"
+              ></v-text-field>
+
+              <label class="mr-sm-2" for="input-password">Senha:</label>
+              <v-text-field
+                id="input-password"
+                v-model="loginForm.password"
+                class="mb-2 mr-sm-2 mb-sm-0"
+                placeholder="Insira sua senha"
+                type="password"
+              ></v-text-field>
+
+              <v-divider></v-divider>
+
+              <div class="pa4">
+                <v-row>
+                  <v-col>
+                    <v-btn type="submit" color="blue" variant="elevated">Login</v-btn>
+                  </v-col>
+                  <v-col>
+                    <v-btn type="reset" color="red" variant="elevated">Limpar</v-btn>
+                  </v-col>
+                </v-row>
+              </div>
+            </v-form>
+          </v-container>
+        </v-card>
+      </v-dialog>
+    </v-app-bar>
+
+    <!-- ... outras partes do conteúdo ... -->
+ <!-- Modal para criar novo perfil -->
+ <v-dialog v-model="isCreateProfileModalOpen" variant="tona2">
         <v-card title="CRIAR NOVO PERFIL">
           <v-container>
-            <v-form v-on:submit.prevent="createUser(novoPerfil)">
-              <label class="mr-sm-2" for="input-nome">Nome:</label>
-              <v-text-field
-                id="input-nome"
-                v-model="novoPerfil.name"
-                class="mb-2 mr-sm-2 mb-sm-0"
-                placeholder="Insira o nome do novo perfil"
-              ></v-text-field>
-  
+
+
+
+<v-divider></v-divider>
+
+<v-form v-on:submit.prevent="createUser(novoPerfil)">
+
+<label class="mr-sm-2" for="input-name">Nome:</label>
+<v-text-field
+
+          id="input-nome"
+          v-model="novoPerfil.name"
+          class="mb-2 mr-sm-2 mb-sm-0"
+          placeholder="Insira o nome do novo perfil"
+        ></v-text-field>
               <label class="mr-sm-2" for="input-email">Email:</label>
               <v-text-field
                 id="input-email"
@@ -23,9 +87,15 @@
                 class="mb-2 mr-sm-2 mb-sm-0"
                 placeholder="Insira o email do novo perfil"
               ></v-text-field>
-  
+              <label class="mr-sm-2" for="input-password">Senha:</label>
+<v-text-field
+  id="input-password"
+  v-model="novoPerfil.password"
+  class="mb-2 mr-sm-2 mb-sm-0"
+  placeholder="Insira a senha do novo perfil"
+  type="password"
+></v-text-field>
               <label class="mr-sm-2" for="input-nascimento">Data de Nascimento:</label>
-              
               <v-text-field
                 id="input-nascimento"
                 v-model="novoPerfil.birthdate"
@@ -48,62 +118,78 @@
             </v-form>
           </v-container>
         </v-card>
-      </template>
-    </v-dialog>
-    <!-- ... código existente ... -->
-  </template>
-  
-  <script>
-  import { ref, onMounted, defineProps } from 'vue';
+      </v-dialog>
+  </v-container>
+</template>
+
+<script>
 import axios from 'axios';
-// ===== FETCH DATA =====
 const URL_SERVER = "http://localhost:5000";
-// https://stackoverflow.com/questions/75680934/nuxt3-nuxt-request-error-unhandled-500-fetch-failed-http-localhost#:~:text=%22dev%22%3A%20%22nuxt%20dev%20--host%200.0.0.0%22%20If%20the%20issue,an%20SSL%20issue%20or%20something%20with%20node%20v18
-// https://nuxt.com/docs/api/composables/use-async-data
-// https://nuxt.com/docs/api/utils/dollarfetch
 
-  export default {
-    // ... código existente ...
-  
-    data() {
-      return {
-        // ... dados existentes ...
-        novoPerfil: {
-          name: '',
-          email: '',
-          birthdate: '',
-        },
-      };
-    },
-  
-    methods: {
-        async createUser() {
-  try {
-    const user = {
-      name: this.novoPerfil.name,
-      email: this.novoPerfil.email,
-      birthdate: this.novoPerfil.birthdate,
+export default {
+  data() {
+    return {
+      // ... outros dados existentes ...
+      isCreateProfileModalOpen: false,
+      novoPerfil: {
+        name: '',
+        email: '',
+        birthdate: '',
+      },
+      loginForm: {
+        username: '',
+        password: '',
+      },
     };
+  },
+  methods: {
+    // ... outros métodos existentes ...
 
-    const response = await axios.post(`${URL_SERVER}/users`, user);
+    // Método para abrir o modal de criar novo perfil
+    openCreateProfileModal() {
+      this.isCreateProfileModalOpen = true;
+    },
+
+    // Método para abrir o modal de login
+    openLoginModal() {
+      this.isLoginModalOpen = true;
+    },
+
+    // Método para lidar com a lógica de criar novo usuário
+    async createUser() {
+  try {
+    const response = await axios.post(`${URL_SERVER}/users`, this.novoPerfil);
 
     if (response.status === 201) {
-      this.novoPerfil.name = '';
-      this.novoPerfil.email = '';
-      this.novoPerfil.birthdate = '';
-
-      // Feedback ao usuário
+      // Novo usuário criado com sucesso
       console.log('Novo usuário criado com sucesso!');
-    
+      this.isCreateProfileModalOpen = false; // Feche o modal após criar o usuário
     } else {
       console.error('Erro ao criar um novo usuário:', response);
-
     }
   } catch (error) {
     console.error('Erro ao criar um novo usuário:', error);
   }
-}
-    },
-  };
-  </script>
-  
+},
+    // Método para lidar com a lógica de login
+    async login() {
+  try {
+    // Chame a API de login no seu backend
+    const response = await this.$axios.post('/login', {
+      username: this.loginForm.username,
+      password: this.loginForm.password,
+    });
+
+    // Armazene o token JWT no localStorage ou Vuex (dependendo das suas necessidades)
+    const token = response.data.token;
+    localStorage.setItem('token', token);
+
+    // Redirecione para a página após o login bem-sucedido
+    this.$router.push('/perfil');
+  } catch (error) {
+    console.error('Erro ao fazer login:', error);
+  }
+},
+  },
+};
+</script>

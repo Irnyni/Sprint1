@@ -2,7 +2,9 @@
 // nuxt.config.js
 
 export default {
-  // ...
+  plugins: [
+    'C:/Users/felip/Desktop/SPRINT3/Sprint1/plugins/axios'
+  ],
 
   modules: [
     '@invictus.codes/nuxt-vuetify'

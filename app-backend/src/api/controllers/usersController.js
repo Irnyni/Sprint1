@@ -1,18 +1,28 @@
 const User = require('../../database/model/userModel'); 
+const bcrypt = require('bcrypt');
+
 function getAllUsers(req, res) {
   User.find()
     .then(users => res.json(users))
     .catch(error => res.status(500).json({ error: 'Erro ao buscar usuários', details: error }));
 }
 
-function createUser(req, res) {
-  const { name, email, birthdate } = req.body;
+async function createUser(req, res) {
+  const { name, email, birthdate, password } = req.body;
 
-  const newUser = new User({ name, email, birthdate });
+  try {
+    // Hash da senha usando bcrypt
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  newUser.save()
-    .then(user => res.status(201).json({ message: 'Usuário criado com sucesso', user }))
-    .catch(error => res.status(500).json({ error: 'Erro ao criar usuário', details: error }));
+    const newUser = new User({ name, email, birthdate, password: hashedPassword });
+
+    await newUser.save();
+
+    res.status(201).json({ message: 'Usuário criado com sucesso', user: newUser });
+  } catch (error) {
+    console.error('Erro ao criar usuário:', error);
+    res.status(500).json({ error: 'Erro ao criar usuário', details: error });
+  }
 }
 
 module.exports = { createUser, getAllUsers };
