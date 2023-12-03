@@ -69,11 +69,13 @@ app.post('/users', async (req, res) => {
   }
 });
 app.post('/login', async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
+
 
   try {
     // Encontre o usuário pelo nome de usuário (ou email)
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ email });
+
 
     if (!user) {
       return res.status(401).send('Nome de usuário ou senha incorretos');
@@ -90,6 +92,14 @@ app.post('/login', async (req, res) => {
     // (Lembre-se de usar um pacote como 'jsonwebtoken' para isso)
 
     // Envie uma resposta adequada para o cliente
+    // Após verificar a senha
+    const token = jwt.sign({ userId: user.id, name: user.name }, secretKey, { expiresIn: '1h' });
+    res.status(200).json({ token, message: 'Login bem-sucedido' });
+    
+if (!user) {
+  return res.status(401).send('Nome de usuário ou senha incorretos');
+}
+
     res.status(200).send('Login bem-sucedido');
   } catch (error) {
     console.error('Erro ao fazer login:', error);
