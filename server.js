@@ -23,13 +23,21 @@ const User = require('./app-backend/src/database/model/userModel');
 // Middleware para verificação do token
 const verifyToken = (req, res, next) => {
   const token = req.header('Authorization');
-
-  if (!token) {
-    return res.status(401).json({ error: 'Token não fornecido' });
+  console.log(token);
+  console.log(!token.startsWith('Bearer '));
+  if (!token || !token.startsWith('Bearer ')) {
+    console.error('Token não fornecido ou no formato incorreto');
+    return res.status(401).json({ error: 'Token não fornecido ou no formato incorreto' });
   }
+  
+  console.log('Antes da verificação do token');
+const decoded = jwt.verify(token, secretKey);
+console.log('Após a verificação do token', decoded);
+
 
   try {
     const decoded = jwt.verify(token, secretKey);
+
     req.user = decoded;
     next();
   } catch (error) {
@@ -44,7 +52,7 @@ app.use('/posts', postsRouter);
 app.use('/users',usersRouter);
 app.use('/comments', commentsRouter);
 app.use('/login', authRouter)
-
+//verifyToken,
 
 // Verificar a conexão
 const db = mongoose.connection;

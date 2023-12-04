@@ -200,7 +200,7 @@ async login() {
   try {
     // Realize a chamada assíncrona para a API de autenticação
     const response = await axios.post(`${URL_SERVER}/login`, {
-      email: this.loginForm.email,
+      email: this.loginForm.email, 
       password: this.loginForm.password,
     });
 
