@@ -204,6 +204,8 @@ async login() {
       password: this.loginForm.password,
     });
 
+    console.log('Resposta da API:', response);
+
     if (response.status === 200) {
       // Login bem-sucedido
       const token = response.data.token;
@@ -214,6 +216,7 @@ async login() {
       this.loginSuccessMessage = 'Login bem-sucedido!';
       this.isLoginModalOpen = false;  // Feche o modal
 
+      console.log('Login bem-sucedido! Token de acesso:', token);
       // Lógica adicional após o login, se necessário
     } else {
       // Se a resposta não for um status 200, trata como falha de login
