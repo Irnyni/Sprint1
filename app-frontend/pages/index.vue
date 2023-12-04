@@ -4,23 +4,19 @@
     <v-app-bar :elevation="50" color="black" dark>
       <v-app-bar-title class="ml-7">GeekStation</v-app-bar-title>
 
-      <v-btn @click="openCardView()" color="white" text>
-        <NuxtLink to="/perfil" class="link-no-bold">Perfil</NuxtLink>
+      <nuxt-link to="/perfil" class="link-no-bold">
+        <v-btn color="white" text>Perfil</v-btn>
+      </nuxt-link>
 
-      </v-btn>
-
-      <v-btn @click="openTabView()" color="white" text>
-        Posts
-      </v-btn>
+  
 
 
       <v-dialog id="modal-novo-item" variant="tonal">
         <template v-slot:activator="{ props }">
           <v-btn v-bind="props" text color="white">Criar post</v-btn>
-          <v-btn @click="" color="white" text>
-            <NuxtLink to="/newUser" class="link-no-bold">Entrar</NuxtLink>
-
-          </v-btn>
+          <nuxt-link to="/newUser" class="link-no-bold">
+        <v-btn color="white" text>Login</v-btn>
+      </nuxt-link>
 
         </template>
 
@@ -122,7 +118,7 @@
               title="Mariana" variant="text"> </v-card>
               <v-card>
                 
-                <h2>{{ comment.commenterName }}</h2>
+       
                 <p>{{ comment.commentText }}</p>
 
               </v-card>
@@ -156,6 +152,7 @@
 <script setup lang="js">
 import { ref, onMounted, defineProps } from 'vue';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 // ===== FETCH DATA =====
 const URL_SERVER = "http://localhost:5000";
 // const { data } = await useAsyncData('', () => $fetch(URL_SERVER))
@@ -210,30 +207,38 @@ async function createPost(novoItem) {
       imagem: novoItem.imagem
     };
 
-    // Faz uma solicitação HTTP POST para adicionar o novo post
-    const response = await axios.post(`${URL_SERVER}/posts`, post);
+    // Obtenha o token do cookie
+    const token = Cookies.get('token');
+
+    // Verifique se o token está presente
+    if (!token) {
+      console.error('Token não fornecido');
+      // Lógica adicional, se necessário
+      return;
+    }
+
+    // Faz uma solicitação HTTP POST para adicionar o novo post, incluindo o token no cabeçalho
+    const response = await axios.post(`${URL_SERVER}/posts`, post, {
+  headers: { Authorization: `Bearer ${token}` }
+});
+    console.log(response);
     if (response.status === 201) {
-      fetchData();
+      // Limpa o formulário ou atualiza a lista após a postagem ser criada com sucesso
       novoItem.descricao = "";
       novoItem.postagem = "";
       novoItem.imagem = "";
 
-
       console.log('Nova postagem criada com sucesso!');
+      // Atualiza a lista de posts após adicionar um novo post
+      fetchData();
     } else {
-
       console.error('Erro ao criar uma nova postagem:', response);
     }
-    // Limpa o formulário ou atualiza a lista após a postagem ser criada com sucesso
-    // (dependendo do seu fluxo de trabalho)
-    console.log('Postagem criada com sucesso:', response.data);
-
-    // Atualiza a lista de posts após adicionar um novo post
-    fetchData();
   } catch (error) {
     console.error('Erro ao criar uma nova postagem:', error);
   }
 }
+
 
 async function fetchComments() {
   try {
@@ -300,27 +305,13 @@ async function fetchData() {
     // Atualizar o valor da variável reativa `posts`
     posts.splice(0, posts.length, ...postsResponse.data);
 
-    // Atualizar o valor da variável reativa `comments`
-    // comments.value = {};
-
-    // Adicione cada conjunto de comentários à chave correspondente
-    // commentsResponse.data.forEach(comment => {
-    //   if (!comments.value[comment.postId]) {
-    //     comments.value[comment.postId] = [];
-    //   }
-    //   comments.value[comment.postId].push(comment);
-    // });
-    // Adicione este log para verificar se `posts` e `comments` foram atualizados corretamente
+    
     console.log('Posts Atualizados:', posts);
     console.log('Comments Atualizados:', comments);
   } catch (error) {
     console.error('Erro ao buscar os dados:', error);
   }
 }
-
-// onMounted(() => {
-//   fetchData();
-// });
 
 async function fetchCommentsForPost(postId) {
   try {

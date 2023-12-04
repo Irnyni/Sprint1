@@ -8,17 +8,25 @@
 
       <!-- Botão para abrir o modal de criação de novo perfil -->
       <v-btn @click="openCreateProfileModal" text color="white">Criar novo perfil</v-btn>
-      
-      <!-- Botão para abrir o modal de login -->
-      <v-btn @click="openLoginModal" text color="white">Login</v-btn>
-    </v-app-bar>
+      <nuxt-link to="/perfil" class="link-no-bold">
+        <v-btn color="white" text>Perfil</v-btn>
+      </nuxt-link>
 
+      <nuxt-link to="/" class="link-no-bold">
+        <v-btn color="white" text>Posts</v-btn>
+      </nuxt-link>
+      <!-- Botão para abrir o modal de login -->
+      <v-btn @click="openLoginModal" text color="white">Entrar</v-btn>
+    </v-app-bar>
+    <div v-if="loginSuccessMessage" class="text-success">{{ loginSuccessMessage }}</div>
     <!-- Modal para login -->
     <v-dialog v-model="isLoginModalOpen" variant="tona2">
       <v-card title="FAÇA LOGIN">
         <v-container>
+
           <v-form v-on:submit.prevent="login">
             <label class="mr-sm-2" for="input-email">Nome de usuário:</label>
+    
             <v-text-field
               id="input-name"
               v-model="loginForm.email"
@@ -114,7 +122,7 @@
 <script>
 import axios from 'axios';
 const URL_SERVER = "http://localhost:5000";
-
+import Cookies from 'js-cookie';
 export default {
   data() {
     
@@ -132,33 +140,61 @@ export default {
       email: '',  // Adicione a propriedade email aqui
       password: '',
     },
+    loginSuccessMessage: '',
     };
   },
+  mounted() {
+  this.checkAuthentication();
+},
   methods: {
     openCreateProfileModal() {
       this.isCreateProfileModalOpen = true;
     },
+ checkAuthentication() {
+    // Verifique se o token está presente no cookie
+    const token = Cookies.get('token');
 
+    if (token) {
+      // Execute a lógica de autenticação aqui, por exemplo, fazendo uma chamada à API para obter informações do usuário
+      console.log('Usuário autenticado! Token:', token);
+
+      // Se necessário, você pode armazenar informações do usuário no estado do componente
+      // Exemplo: this.authenticatedUser = { name: 'John Doe', email: 'john@example.com' };
+    } else {
+      // O usuário não está autenticado
+      console.log('Usuário não autenticado');
+    }
+  },
     openLoginModal() {
       this.isLoginModalOpen = true;
     },
 
     async createUser() {
-      try {
-        const response = await axios.post(`${URL_SERVER}/users`, this.novoPerfil);
+  try {
+    const token = Cookies.get('token');
 
-        if (response.status === 201) {
-          console.log('Novo usuário criado com sucesso!');
-          this.isCreateProfileModalOpen = false;
-        } else {
-          console.error('Erro ao criar um novo usuário:', response);
-        }
-      } catch (error) {
-        console.error('Erro ao criar um novo usuário:', error);
-      }
-    },
+    if (!token) {
+      console.error('Token não encontrado nos cookies.');
+      // Lógica adicional, se necessário, como redirecionar para a página de login
+      return;
+    }
 
-    async login() {
+    const response = await axios.post(`${URL_SERVER}/users`, this.novoPerfil, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (response.status === 201) {
+      console.log('Novo usuário criado com sucesso!');
+      this.isCreateProfileModalOpen = false;
+    } else {
+      console.error('Erro ao criar um novo usuário:', response);
+    }
+  } catch (error) {
+    console.error('Erro ao criar um novo usuário:', error);
+  }
+},
+
+async login() {
   console.log("Entrando na função de login");
 
   try {
@@ -170,10 +206,17 @@ export default {
 
     if (response.status === 200) {
       // Login bem-sucedido
-      console.log('Login bem-sucedido! Token de acesso:', response.data.token);
+      const token = response.data.token;
+
+      // Salve o token no cookie
+      Cookies.set('token', token, { expires: 7 });
+
+      this.loginSuccessMessage = 'Login bem-sucedido!';
+      this.isLoginModalOpen = false;  // Feche o modal
+
       // Lógica adicional após o login, se necessário
     } else {
-      // Se a resposta não for um status 201, trata como falha de login
+      // Se a resposta não for um status 200, trata como falha de login
       console.error('Falha no login. Resposta da API:', response);
       // Lógica adicional para lidar com a falha de login, se necessário
     }
@@ -183,6 +226,8 @@ export default {
     // Lógica adicional para lidar com erros, se necessário
   }
 }
+
+
 
 
 

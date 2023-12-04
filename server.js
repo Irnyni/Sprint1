@@ -33,6 +33,7 @@ const verifyToken = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (error) {
+    console.log(token);
     console.error('Erro na verificação do token:', error);
     res.status(401).json({ error: 'Token inválido' });
   }
@@ -43,64 +44,7 @@ app.use('/posts', postsRouter);
 app.use('/users',usersRouter);
 app.use('/comments', commentsRouter);
 app.use('/login', authRouter)
-//verifyToken
-// Rota para login
-// app.post('/users', async (req, res) => {
-//   console.log('Dados recebidos:', req.body);
 
-//   const { name, email, birthdate, password } = req.body;
-
-  
-
-//   try {
-//     const hashedPassword = await bcrypt.hash(password, 10);
-
-//     const newUser = new User({
-//       name,
-//       email,
-//       birthdate,
-//       password: hashedPassword,
-//     });
-
-//     await newUser.save();
-
-//     res.status(201).send('Usuário criado com sucesso');
-//   } catch (error) {
-//     console.error('Erro ao criar um novo usuário:', error);
-//     res.status(500).send('Erro ao criar um novo usuário');
-//   }
-// });
-// app.post('/login', async (req, res) => {
-//   const { email, password } = req.body;
-
-//   try {
-//     // Encontre o usuário pelo nome de usuário (ou email)
-//     const user = await User.findOne({ email });
-
-//     console.log('User:', user);  // Adicione esta linha para depuração
-
-//     if (!user) {
-//       console.log('Credenciais inválidas: Usuário não encontrado');  // Adicione esta linha para depuração
-//       return res.status(401).send('Credenciais inválidas');
-//     }
-
-//     // Verifique a senha usando bcrypt
-//     const isPasswordValid = await bcrypt.compare(password, user.password);
-
-//     if (!isPasswordValid) {
-//       console.log('Credenciais inválidas: Senha incorreta');  // Adicione esta linha para depuração
-//       return res.status(401).send('Credenciais inválidas');
-//     }
-
-//     // Se a senha estiver correta, gere um token JWT e envie para o cliente
-//     const token = jwt.sign({ userId: user.id, name: user.name }, secretKey, { expiresIn: '1h' });
-//     res.status(200).json({ token, message: 'Login bem-sucedido' });
-
-//   } catch (error) {
-//     console.error('Erro ao fazer login:', error);
-//     res.status(500).send('Erro ao fazer login');
-//   }
-// });
 
 // Verificar a conexão
 const db = mongoose.connection;

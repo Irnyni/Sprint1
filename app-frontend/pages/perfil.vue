@@ -3,19 +3,18 @@
       <v-app-bar :elevation="50" color="black" dark>
       <v-app-bar-title class="ml-7">GeekStation</v-app-bar-title>
 
-      <v-btn @click="openCardView()" color="white" text>
-        <NuxtLink to="/perfil" class="link-no-bold">Perfil</NuxtLink>
 
-      </v-btn>
-
-      <v-btn @click="openTabView()" color="white" text>
-        <NuxtLink to="/" class="link-no-bold">Post</NuxtLink>
-
-      </v-btn>
+      <nuxt-link to="/" class="link-no-bold">
+        <v-btn color="white" text>Posts</v-btn>
+      </nuxt-link>
+      <nuxt-link to="/newUser" class="link-no-bold">
+        <v-btn color="white" text>Login</v-btn>
+      </nuxt-link>
+    
       <!-- Modal para inserir novo -->
       <v-dialog id="modal-novo-item" variant="tonal">
         <template v-slot:activator="{ props }">
-          <v-btn v-bind="props" text color="white">Criar post</v-btn>
+         
         </template>
 
         <template v-slot:default="{ isActive }">
