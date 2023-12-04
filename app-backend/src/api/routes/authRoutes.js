@@ -4,6 +4,6 @@ const authController = require('../controllers/authController');  // Importe o c
 const router = express.Router();
 
 // Rota para login
-router.post('/login', authController.login);
+router.post('/', authController.login);
 
 module.exports = router;

@@ -18,10 +18,10 @@
       <v-card title="FAÇA LOGIN">
         <v-container>
           <v-form v-on:submit.prevent="login">
-            <label class="mr-sm-2" for="input-username">Nome de usuário:</label>
+            <label class="mr-sm-2" for="input-email">Nome de usuário:</label>
             <v-text-field
-              id="input-username"
-              v-model="loginForm.username"
+              id="input-name"
+              v-model="loginForm.email"
               class="mb-2 mr-sm-2 mb-sm-0"
               placeholder="Insira seu nome de usuário"
             ></v-text-field>
@@ -168,7 +168,7 @@ export default {
       password: this.loginForm.password,
     });
 
-    if (response.status === 201) {
+    if (response.status === 200) {
       // Login bem-sucedido
       console.log('Login bem-sucedido! Token de acesso:', response.data.token);
       // Lógica adicional após o login, se necessário

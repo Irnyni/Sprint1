@@ -1,39 +1,31 @@
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const User = require('../../database/model/userModel');
-
-const secretKey = 'seu_segredo_super_secreto';
-
-// Função para lidar com o login
+const bodyParser = require('body-parser');
 async function login(req, res) {
   const { email, password } = req.body;
-
+  console.log('Email:', email);
+  console.log('Password:', password);
+  
   try {
-    // Encontre o usuário pelo nome de usuário (ou email)
-    const user = await User.findOne({ email });
-
-    console.log('User:', user);  // Adicione esta linha para depuração
-
+    const user = await User.findOne({ email});
+    console.log(email);
     if (!user) {
-      console.log('Credenciais inválidas: Usuário não encontrado');  // Adicione esta linha para depuração
-      return res.status(401).send('Credenciais inválidas');
+      return res.status(401).json({ error: 'Nome de usuário ou senha incorretos' });
     }
 
-    // Verifique a senha usando bcrypt
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      console.log('Credenciais inválidas: Senha incorreta');  // Adicione esta linha para depuração
-      return res.status(401).send('Credenciais inválidas');
+      return res.status(401).json({ error: 'Nome de usuário ou senha incorretos' });
     }
 
-    // Se a senha estiver correta, gere um token JWT e envie para o cliente
-    const token = jwt.sign({ userId: user.id, name: user.name }, secretKey, { expiresIn: '1h' });
-    res.status(200).json({ token, message: 'Login bem-sucedido' });
+    const token = jwt.sign({ userId: user.id, name: user.email}, 'seu_segredo_super_secreto', { expiresIn: '1h' });
 
+    res.json({ token });
   } catch (error) {
     console.error('Erro ao fazer login:', error);
-    res.status(500).send('Erro ao fazer login');
+    res.status(500).json({ error: 'Erro interno do servidor' });
   }
 }
 
