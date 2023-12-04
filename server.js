@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 const postsRouter = require('./app-backend/src/api/routes/posts');
 const usersRouter = require('./app-backend/src/api/routes/users');
 const commentsRouter = require('./app-backend/src/api/routes/comments');
+const authRouter = require('./app-backend/src/api/routes/authRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -38,74 +39,69 @@ const verifyToken = (req, res, next) => {
 };
 
 // Rotas protegidas
-app.use('/posts', verifyToken, postsRouter);
+app.use('/posts', postsRouter);
 app.use('/users',usersRouter);
-app.use('/comments', verifyToken, commentsRouter);
-
+app.use('/comments', commentsRouter);
+app.use('/login', authRouter)
+//verifyToken
 // Rota para login
-app.post('/users', async (req, res) => {
-  console.log('Dados recebidos:', req.body);
+// app.post('/users', async (req, res) => {
+//   console.log('Dados recebidos:', req.body);
 
-  const { name, email, birthdate, password } = req.body;
+//   const { name, email, birthdate, password } = req.body;
 
   
 
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
+//   try {
+//     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({
-      name,
-      email,
-      birthdate,
-      password: hashedPassword,
-    });
+//     const newUser = new User({
+//       name,
+//       email,
+//       birthdate,
+//       password: hashedPassword,
+//     });
 
-    await newUser.save();
+//     await newUser.save();
 
-    res.status(201).send('Usuário criado com sucesso');
-  } catch (error) {
-    console.error('Erro ao criar um novo usuário:', error);
-    res.status(500).send('Erro ao criar um novo usuário');
-  }
-});
-app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+//     res.status(201).send('Usuário criado com sucesso');
+//   } catch (error) {
+//     console.error('Erro ao criar um novo usuário:', error);
+//     res.status(500).send('Erro ao criar um novo usuário');
+//   }
+// });
+// app.post('/login', async (req, res) => {
+//   const { email, password } = req.body;
 
+//   try {
+//     // Encontre o usuário pelo nome de usuário (ou email)
+//     const user = await User.findOne({ email });
 
-  try {
-    // Encontre o usuário pelo nome de usuário (ou email)
-    const user = await User.findOne({ email });
+//     console.log('User:', user);  // Adicione esta linha para depuração
 
+//     if (!user) {
+//       console.log('Credenciais inválidas: Usuário não encontrado');  // Adicione esta linha para depuração
+//       return res.status(401).send('Credenciais inválidas');
+//     }
 
-    if (!user) {
-      return res.status(401).send('Nome de usuário ou senha incorretos');
-    }
+//     // Verifique a senha usando bcrypt
+//     const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    // Verifique a senha usando bcrypt
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+//     if (!isPasswordValid) {
+//       console.log('Credenciais inválidas: Senha incorreta');  // Adicione esta linha para depuração
+//       return res.status(401).send('Credenciais inválidas');
+//     }
 
-    if (!isPasswordValid) {
-      return res.status(401).send('Nome de usuário ou senha incorretos');
-    }
+//     // Se a senha estiver correta, gere um token JWT e envie para o cliente
+//     const token = jwt.sign({ userId: user.id, name: user.name }, secretKey, { expiresIn: '1h' });
+//     res.status(200).json({ token, message: 'Login bem-sucedido' });
 
-    // Se a senha estiver correta, você pode gerar um token JWT aqui e enviar para o cliente
-    // (Lembre-se de usar um pacote como 'jsonwebtoken' para isso)
+//   } catch (error) {
+//     console.error('Erro ao fazer login:', error);
+//     res.status(500).send('Erro ao fazer login');
+//   }
+// });
 
-    // Envie uma resposta adequada para o cliente
-    // Após verificar a senha
-    const token = jwt.sign({ userId: user.id, name: user.name }, secretKey, { expiresIn: '1h' });
-    res.status(200).json({ token, message: 'Login bem-sucedido' });
-    
-if (!user) {
-  return res.status(401).send('Nome de usuário ou senha incorretos');
-}
-
-    res.status(200).send('Login bem-sucedido');
-  } catch (error) {
-    console.error('Erro ao fazer login:', error);
-    res.status(500).send('Erro ao fazer login');
-  }
-});
 // Verificar a conexão
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Erro de conexão ao MongoDB:'));

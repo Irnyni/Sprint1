@@ -18,7 +18,7 @@
         <template v-slot:activator="{ props }">
           <v-btn v-bind="props" text color="white">Criar post</v-btn>
           <v-btn @click="" color="white" text>
-            <NuxtLink to="/newUser" class="link-no-bold">login</NuxtLink>
+            <NuxtLink to="/newUser" class="link-no-bold">Entrar</NuxtLink>
 
           </v-btn>
 

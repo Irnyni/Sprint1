@@ -2,10 +2,10 @@
 // nuxt.config.js
 
 export default {
-  plugins: [
-    'C:/Users/felip/Desktop/SPRINT3/Sprint1/plugins/axios'
-  ],
-
+//   plugins: [
+//     'C:/Users/felip/Desktop/Sprint3/Sprint1/app-frontend/plugins/axios'
+//   ]
+// ,
   modules: [
     '@invictus.codes/nuxt-vuetify'
   ],

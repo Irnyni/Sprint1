@@ -122,15 +122,16 @@ export default {
       isCreateProfileModalOpen: false,
       isLoginModalOpen: false,
       novoPerfil: {
-        name: '',
-        email: '',
-        birthdate: '',
-        // ... outros campos do objeto ...
-      },
-      loginForm: {
-        username: '',
-        password: '',
-      },
+      name: '',
+      email: '',  // Adicione a propriedade email aqui
+      birthdate: '',
+      // ... outros campos do objeto ...
+    },
+    loginForm: {
+      name: '',
+      email: '',  // Adicione a propriedade email aqui
+      password: '',
+    },
     };
   },
   methods: {
@@ -158,28 +159,31 @@ export default {
     },
 
     async login() {
-    console.log("Entrando na função de login");
+  console.log("Entrando na função de login");
 
-    try {
-      // Realize a chamada assíncrona para a API de autenticação
-      const response = await axios.post(`${URL_SERVER}/login`, this.loginForm);
+  try {
+    // Realize a chamada assíncrona para a API de autenticação
+    const response = await axios.post(`${URL_SERVER}/login`, {
+      email: this.loginForm.email,
+      password: this.loginForm.password,
+    });
 
-
-      if (response.status === 200) {
-        // Login bem-sucedido
-        console.log('Login bem-sucedido! Token de acesso:', response.data.token);
-        // Lógica adicional após o login, se necessário
-      } else {
-        // Se a resposta não for um status 200, trata como falha de login
-        console.error('Falha no login. Resposta da API:', response);
-        // Lógica adicional para lidar com a falha de login, se necessário
-      }
-    } catch (error) {
-      // Trata erros na chamada assíncrona (por exemplo, falha de rede)
-      console.error('Erro durante a tentativa de login:', error);
-      // Lógica adicional para lidar com erros, se necessário
+    if (response.status === 201) {
+      // Login bem-sucedido
+      console.log('Login bem-sucedido! Token de acesso:', response.data.token);
+      // Lógica adicional após o login, se necessário
+    } else {
+      // Se a resposta não for um status 201, trata como falha de login
+      console.error('Falha no login. Resposta da API:', response);
+      // Lógica adicional para lidar com a falha de login, se necessário
     }
+  } catch (error) {
+    // Trata erros na chamada assíncrona (por exemplo, falha de rede)
+    console.error('Erro durante a tentativa de login:', error);
+    // Lógica adicional para lidar com erros, se necessário
   }
+}
+
 
 
 
