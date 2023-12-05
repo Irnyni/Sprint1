@@ -211,7 +211,13 @@ async login() {
       const token = response.data.token;
 
       // Salve o token no cookie
-      Cookies.set('token', token, { expires: 7 });
+      Cookies.set('token', token, {
+  expires: 7,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'None',
+  path: '/' // Defina o caminho apropriado
+});
+
 
       this.loginSuccessMessage = 'Login bem-sucedido!';
       this.isLoginModalOpen = false;  // Feche o modal

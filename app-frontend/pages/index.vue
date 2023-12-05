@@ -242,7 +242,7 @@ async function createPost(novoItem) {
 
 async function fetchComments() {
   try {
-    const postId = 1; // Substitua 1 pelo ID do post específico para o qual deseja buscar os comentários
+    const postId = '656949312c3ad81186f79341'; 
     const response = await axios.get(`http://localhost:5000/comments/${postId}`);
     comments.value = response.data;
   } catch (error) {
@@ -272,27 +272,11 @@ function getRandomProfileImageURL() {
   const randomNumber = Math.floor(Math.random() * 100) + 1; // Gera um número aleatório de 1 a 100
   return `https://randomuser.me/api/portraits/women/${randomNumber}.jpg`;
 }
-function openCardView() {
 
-  cardView.value = true;
-  tableView.value = false;
-};
-
-function openTabView() {
-  cardView.value = false;
-  tableView.value = true;
-}
-
-function updateItemList() {
-  $fetch(URL_SERVER + 'postagem').then(data => {
-    items.value = data;
-  })
-};
 
 async function fetchData() {
   try {
     const postsResponse = await axios.get('http://localhost:5000/posts');
-    const commentsResponse = await axios.get('http://localhost:5000/comments');
     
     for(const post of postsResponse.data){
       console.log(post._id);
