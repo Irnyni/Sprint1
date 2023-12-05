@@ -462,12 +462,13 @@ h2 {
 
     height: 200px;
     width: 70%;
+    margin-bottom: 100px;
 }
 
 .v-col.postagens {
     display: flex;
     justify-content:flex-start;
-     margin-bottom: 400px;
+     margin-bottom: 50px;
     
 
 
@@ -475,6 +476,7 @@ h2 {
 
 .v-col.coments {
     height: 150px;
+
 }
 
 
