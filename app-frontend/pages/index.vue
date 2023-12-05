@@ -1,152 +1,154 @@
 <template>
-  <div>
-    <!-- Navegação -->
-    <v-app-bar :elevation="50" color="black" dark>
-      <v-app-bar-title class="ml-7">GeekStation</v-app-bar-title>
+    <div>
+        <!-- Navegação -->
+        <v-app-bar :elevation="50" color="black" dark>
+            <v-app-bar-title class="ml-7">GeekStation</v-app-bar-title>
 
-      <nuxt-link to="/perfil" class="link-no-bold">
-        <v-btn color="white" text>Perfil</v-btn>
-      </nuxt-link>
-
-  
+            <nuxt-link to="/perfil" class="link-no-bold">
+                <v-btn color="white" text>Perfil</v-btn>
+            </nuxt-link>
 
 
-      <v-dialog id="modal-novo-item" variant="tonal">
-        <template v-slot:activator="{ props }">
-          <v-btn v-bind="props" text color="white">Criar post</v-btn>
-          <nuxt-link to="/newUser" class="link-no-bold">
-        <v-btn color="white" text>Login</v-btn>
-      </nuxt-link>
 
-        </template>
 
-        <template v-slot:default="{ isActive }">
-          <v-card title="CRIAR NOVO">
-            <v-container>
-              <v-form v-on:submit.prevent="createPost(novoItem)">
-                <label class="mr-sm-2" for="input-descricao">Descrição:</label>
-                <v-text-field id="input-descricao" v-model="novoItem.descricao" class="mb-2 mr-sm-2 mb-sm-0"
-                  placeholder="Insira a descrição do seu post"></v-text-field>
+            <v-dialog id="modal-novo-item" variant="tonal">
+                <template v-slot:activator="{ props }">
+                    <v-btn v-bind="props" text color="white">Criar post</v-btn>
+                    <nuxt-link to="/newUser" class="link-no-bold">
+                        <v-btn color="white" text>Login</v-btn>
+                    </nuxt-link>
 
-                <label class="mr-sm-2" for="input-texto">Post:</label>
-                <v-textarea id="post" v-model="novoItem.postagem" class="mb-2 mr-sm-2 mb-sm-0"
-                  placeholder="Escreva seu post"></v-textarea>
-                <v-text-field id="input-capa" v-model="novoItem.imagem" class="mb-2 mr-sm-2 mb-sm-0"
-                  placeholder="link da imagem"></v-text-field>
-                <v-divider></v-divider>
+                </template>
 
-                <div class="pa4">
-                  <v-row>
-                    <v-col>
-                      <v-btn type="submit" color="blue" variant="elevated" @click="isActive.value = false">Criar</v-btn>
-                    </v-col>
-                    <v-col>
-                      <v-btn type="reset" color="red" variant="elevated">Limpar</v-btn>
-                    </v-col>
-                  </v-row>
+                <template v-slot:default="{ isActive }">
+                    <v-card title="CRIAR NOVO">
+                        <v-container>
+                            <v-form v-on:submit.prevent="createPost(novoItem)">
+                                <label class="mr-sm-2" for="input-descricao">Descrição:</label>
+                                <v-text-field id="input-descricao" v-model="novoItem.descricao" class="mb-2 mr-sm-2 mb-sm-0"
+                                    placeholder="Insira a descrição do seu post"></v-text-field>
+
+                                <label class="mr-sm-2" for="input-texto">Post:</label>
+                                <v-textarea id="post" v-model="novoItem.postagem" class="mb-2 mr-sm-2 mb-sm-0"
+                                    placeholder="Escreva seu post"></v-textarea>
+                                <v-text-field id="input-capa" v-model="novoItem.imagem" class="mb-2 mr-sm-2 mb-sm-0"
+                                    placeholder="link da imagem"></v-text-field>
+                                <v-divider></v-divider>
+
+                                <div class="pa4">
+                                    <v-row>
+                                        <v-col>
+                                            <v-btn type="submit" color="blue" variant="elevated"
+                                                @click="isActive.value = false">Criar</v-btn>
+                                        </v-col>
+                                        <v-col>
+                                            <v-btn type="reset" color="red" variant="elevated">Limpar</v-btn>
+                                        </v-col>
+                                    </v-row>
+                                </div>
+                            </v-form>
+                        </v-container>
+                    </v-card>
+                </template>
+            </v-dialog>
+        </v-app-bar>
+        <v-dialog v-model="commentModalOpen" variant="tonal">
+            <template v-slot:activator="{ props }">
+                <v-btn v-bind="props" text color="primary">Adicionar Comentário</v-btn>
+            </template>
+
+            <template v-slot:default="{ isActive }">
+                <v-card title="ADICIONAR COMENTÁRIO">
+                    <v-container>
+                        <v-form @submit.prevent="adicionarComentario($event)">
+
+
+                            <label class="mr-sm-2" for="input-comentario">Comentário:</label>
+                            <v-textarea id="input-comentario" v-model="novoComentarioTexto" class="mb-2 mr-sm-2 mb-sm-0"
+                                placeholder="Escreva seu comentário"></v-textarea>
+
+                            <v-divider></v-divider>
+
+                            <div class="pa4">
+                                <v-row>
+                                    <v-col>
+                                        <v-btn type="submit" color="blue" variant="elevated">Adicionar</v-btn>
+                                    </v-col>
+                                    <v-col>
+                                        <v-btn type="reset" color="red" variant="elevated"
+                                            @click="commentModalOpen = false">Cancelar</v-btn>
+                                    </v-col>
+                                </v-row>
+                            </div>
+                        </v-form>
+                    </v-container>
+                </v-card>
+            </template>
+        </v-dialog>
+
+        <v-main>
+            <div class="all">
+
+
+
+
+
+
+                <v-container>
+                    <v-row>
+
+                        <v-col v-for="post in posts" :key="post.id" class="postagens">
+                            <v-card class="profile-card" density="compact" :prepend-avatar="profileImageURL" subtitle="geek"
+                                title="Mariana" variant="text"> </v-card>
+                            <v-card class="cardpostagem">
+                                <h2>{{ post.descricao }}</h2>
+                                <v-img :src="post.imagem"></v-img>
+                                <p>{{ post.postagem }}</p>
+
+                                <template v-slot:actions>
+                                    <v-btn color="primary" variant="text">Curtir</v-btn>
+
+                                    <v-btn @click="openCommentModal(post._id)" color="primary">Adicionar Comentário</v-btn>
+
+                                    <v-btn @click="excluirPostagem(post._id)" color="red" variant="text">Excluir</v-btn>
+                                </template>
+                            </v-card>
+
+                            <!-- comentarios!!! -->
+                            <v-col v-for="comment in comments[post._id]" :key="comment._id" class="coments">
+                                <v-card class="profile-card" density="compact" :prepend-avatar="profileImageURL"
+                                    subtitle="geek" title="Mariana" variant="text"> </v-card>
+                                <v-card>
+
+
+                                    <p>{{ comment.commentText }}</p>
+
+                                </v-card>
+                            </v-col>
+
+                        </v-col>
+
+
+                    </v-row>
+                </v-container>
+            </div>
+            <template>
+                <div class="invent-cards" v-if="cardView">
+                    <v-container>
+                        <v-row>
+                            <v-col v-for="item in items" :key="item.id">
+                                <card-item :item="item"></card-item>
+                                <div>{{ item.descricao }}</div>
+                            </v-col>
+                        </v-row>
+                    </v-container>
                 </div>
-              </v-form>
-            </v-container>
-          </v-card>
-        </template>
-      </v-dialog>
-    </v-app-bar>
-    <v-dialog v-model="commentModalOpen" variant="tonal">
-      <template v-slot:activator="{ props }">
-        <v-btn v-bind="props" text color="primary">Adicionar Comentário</v-btn>
-      </template>
 
-      <template v-slot:default="{ isActive }">
-        <v-card title="ADICIONAR COMENTÁRIO">
-          <v-container>
-            <v-form @submit.prevent="adicionarComentario($event)">
+            </template>
 
 
-              <label class="mr-sm-2" for="input-comentario">Comentário:</label>
-              <v-textarea id="input-comentario" v-model="novoComentarioTexto" class="mb-2 mr-sm-2 mb-sm-0"
-                placeholder="Escreva seu comentário"></v-textarea>
-
-              <v-divider></v-divider>
-
-              <div class="pa4">
-                <v-row>
-                  <v-col>
-                    <v-btn type="submit" color="blue" variant="elevated">Adicionar</v-btn>
-                  </v-col>
-                  <v-col>
-                    <v-btn type="reset" color="red" variant="elevated" @click="commentModalOpen = false">Cancelar</v-btn>
-                  </v-col>
-                </v-row>
-              </div>
-            </v-form>
-          </v-container>
-        </v-card>
-      </template>
-    </v-dialog>
-
-    <v-main>
-<div class="all">
-
-
-
-
-
-
-      <v-container>
-        <v-row>
-
-          <v-col v-for="post in posts" :key="post.id" class="postagens">
-            <v-card class="profile-card" density="compact" :prepend-avatar="profileImageURL" subtitle="geek"
-              title="Mariana" variant="text"> </v-card>
-            <v-card class="cardpostagem">
-              <h2>{{ post.descricao }}</h2>
-              <v-img :src="post.imagem"></v-img>
-              <p>{{ post.postagem }}</p>
-
-              <template v-slot:actions>
-                <v-btn color="primary" variant="text">Curtir</v-btn>
-
-                <v-btn @click="openCommentModal(post._id)" color="primary">Adicionar Comentário</v-btn>
-
-                <v-btn @click="excluirPostagem(post._id)" color="red" variant="text">Excluir</v-btn>
-              </template>
-            </v-card>
-
-            <!-- comentarios!!! -->
-            <v-col v-for="comment in comments[post._id]" :key="comment._id" class="coments">
-  <v-card class="profile-card" density="compact" :prepend-avatar="profileImageURL" subtitle="geek"
-              title="Mariana" variant="text"> </v-card>
-              <v-card>
-                
-       
-                <p>{{ comment.commentText }}</p>
-
-              </v-card>
-            </v-col>
-
-          </v-col>
-
-
-        </v-row>
-      </v-container>
+        </v-main>
     </div>
-      <template>
-        <div class="invent-cards" v-if="cardView">
-          <v-container>
-            <v-row>
-              <v-col v-for="item in items" :key="item.id">
-                <card-item :item="item"></card-item>
-                <div>{{ item.descricao }}</div>
-              </v-col>
-            </v-row>
-          </v-container>
-        </div>
-
-      </template>
-
-
-    </v-main>
-  </div>
 </template>
 
 <script setup lang="js">
@@ -174,175 +176,183 @@ const comments = ref({});
 const commentModalOpen = ref(false);
 const currentPostId = ref(null);
 
+const token = useCookie("token").value
+console.log(token);
+
 
 function openCommentModal(postId) {
-  commentModalOpen.value = true;
-  currentPostId.value = postId;
+    commentModalOpen.value = true;
+    currentPostId.value = postId;
 }
 
 const posts = reactive([]);
 const commenys = reactive([]);
 const novoItem = ref({
-  descricao: "",
-  postagem: "",
-  imagem: ""
+    descricao: "",
+    postagem: "",
+    imagem: ""
 });
 
 onMounted(() => {
-  fetchComments();
+    fetchComments();
 });
 
 onMounted(() => {
-  fetchData();
+    fetchData();
 })
 
 console.log(posts);
 
 async function createPost(novoItem) {
-  try {
-    // Objeto com os dados do novo post
-    const post = {
-      descricao: novoItem.descricao,
-      postagem: novoItem.postagem,
-      imagem: novoItem.imagem
-    };
+    try {
+        // Objeto com os dados do novo post
+        const post = {
+            descricao: novoItem.descricao,
+            postagem: novoItem.postagem,
+            imagem: novoItem.imagem
+        };
 
-    // Obtenha o token do cookie
-    const token = Cookies.get('token');
-    console.log(token);
-    // Verifique se o token está presente
-    if (!token) {
-      console.error('Token não fornecido');
-      // Lógica adicional, se necessário
-      return;
+        // Verifique se o token está presente
+        if (!token) {
+            console.error('Token não fornecido');
+            // Lógica adicional, se necessário
+            return;
+        }
+
+        // Faz uma solicitação HTTP POST para adicionar o novo post, incluindo o token no cabeçalho
+        const response = await axios.post(`${URL_SERVER}/posts`, post, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        console.log(response);
+        if (response.status === 201) {
+            // Limpa o formulário ou atualiza a lista após a postagem ser criada com sucesso
+            novoItem.descricao = "";
+            novoItem.postagem = "";
+            novoItem.imagem = "";
+
+            console.log('Nova postagem criada com sucesso!');
+            // Atualiza a lista de posts após adicionar um novo post
+            fetchData();
+        } else {
+            console.error('Erro ao criar uma nova postagem:', response);
+        }
+    } catch (error) {
+        console.error('Erro ao criar uma nova postagem:', error);
     }
-
-    // Faz uma solicitação HTTP POST para adicionar o novo post, incluindo o token no cabeçalho
-    const response = await axios.post(`${URL_SERVER}/posts`, post, {
-  headers: { Authorization: `Bearer ${token}` }
-});
-    console.log(response);
-    if (response.status === 201) {
-      // Limpa o formulário ou atualiza a lista após a postagem ser criada com sucesso
-      novoItem.descricao = "";
-      novoItem.postagem = "";
-      novoItem.imagem = "";
-
-      console.log('Nova postagem criada com sucesso!');
-      // Atualiza a lista de posts após adicionar um novo post
-      fetchData();
-    } else {
-      console.error('Erro ao criar uma nova postagem:', response);
-    }
-  } catch (error) {
-    console.error('Erro ao criar uma nova postagem:', error);
-  }
 }
 
 
 async function fetchComments() {
-  try {
-    const postId = '656949312c3ad81186f79341'; 
-    const response = await axios.get(`http://localhost:5000/comments/${postId}`);
-    comments.value = response.data;
-  } catch (error) {
-    console.error('Erro ao buscar os comentários:', error);
-  }
+    try {
+        const postId = '656949312c3ad81186f79341';
+        const response = await axios.get(`http://localhost:5000/comments/${postId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        comments.value = response.data;
+    } catch (error) {
+        console.error('Erro ao buscar os comentários:', error);
+    }
 }
 
 async function excluirPostagem(postId) {
-  try {
-    console.log('ID do post a ser excluído:', postId);
+    try {
+        console.log('ID do post a ser excluído:', postId);
 
-    const response = await axios.delete(`${URL_SERVER}/posts/${postId}`);
-    if (response.status === 200) {
-      console.log('Postagem excluída com sucesso!');
-      // Atualize a lista de postagens após excluir a postagem
-      fetchData();
-    } else {
-      console.error('Erro ao excluir a postagem:', response);
+        const response = await axios.delete(`${URL_SERVER}/posts/${postId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        if (response.status === 200) {
+            console.log('Postagem excluída com sucesso!');
+            // Atualize a lista de postagens após excluir a postagem
+            fetchData();
+        } else {
+            console.error('Erro ao excluir a postagem:', response);
+        }
+    } catch (error) {
+        console.error('Erro ao excluir a postagem:', error);
     }
-  } catch (error) {
-    console.error('Erro ao excluir a postagem:', error);
-  }
 }
 
 
 function getRandomProfileImageURL() {
-  const randomNumber = Math.floor(Math.random() * 100) + 1; // Gera um número aleatório de 1 a 100
-  return `https://randomuser.me/api/portraits/women/${randomNumber}.jpg`;
+    const randomNumber = Math.floor(Math.random() * 100) + 1; // Gera um número aleatório de 1 a 100
+    return `https://randomuser.me/api/portraits/women/${randomNumber}.jpg`;
 }
 
 
 async function fetchData() {
-  try {
-    const postsResponse = await axios.get('http://localhost:5000/posts');
+    try {
+        const postsResponse = await axios.get('http://localhost:5000/posts', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
 
-    
-    for(const post of postsResponse.data){
-      console.log(post._id);
-      await fetchCommentsForPost(post._id);
+
+        for (const post of postsResponse.data) {
+            console.log(post._id);
+            await fetchCommentsForPost(post._id);
+        }
+
+        console.log('Posts:', postsResponse.data);
+        console.log('Comments:', comments.value);
+
+        // Atualizar o valor da variável reativa `posts`
+        posts.splice(0, posts.length, ...postsResponse.data);
+
+
+        console.log('Posts Atualizados:', posts);
+        console.log('Comments Atualizados:', comments);
+    } catch (error) {
+        console.error('Erro ao buscar os dados:', error);
     }
-
-    console.log('Posts:', postsResponse.data);
-    console.log('Comments:', comments.value);
-
-    // Atualizar o valor da variável reativa `posts`
-    posts.splice(0, posts.length, ...postsResponse.data);
-
-    
-    console.log('Posts Atualizados:', posts);
-    console.log('Comments Atualizados:', comments);
-  } catch (error) {
-    console.error('Erro ao buscar os dados:', error);
-  }
 }
 
 async function fetchCommentsForPost(postId) {
-  try {
-    console.log("Server: " + `${URL_SERVER}/comments/posts/${postId}`);
-    const response = await axios.get(`${URL_SERVER}/comments/posts/${postId}`);
-    comments.value[postId] = response.data;
-    console.log('Comentários para o post', postId, ':', response.data);
-  } catch (error) {
-    console.error('Erro ao buscar os comentários para o post:', error);
-  }
+    try {
+        console.log("Server: " + `${URL_SERVER}/comments/posts/${postId}`);
+        const response = await axios.get(`${URL_SERVER}/comments/posts/${postId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        comments.value[postId] = response.data;
+        console.log('Comentários para o post', postId, ':', response.data);
+    } catch (error) {
+        console.error('Erro ao buscar os comentários para o post:', error);
+    }
 }
 
 
 
 async function adicionarComentario() {
+    try {
+        console.log('Comentários no Vue:', comments);
+        const postId = currentPostId.value;
+        const commentText = novoComentarioTexto.value;
 
-  try {
-    console.log('Comentários no Vue:', comments);
-    const postId = currentPostId.value;
-    const commentText = novoComentarioTexto.value;
+        // Validar dados antes da solicitação
+        if (!postId || !commentText.trim()) {
+            console.error('Invalid postId or empty commentText.');
+            return;
+        }
 
-    // Validar dados antes da solicitação
-    if (!postId || !commentText.trim()) {
-      console.error('Invalid postId or empty commentText.');
-      return;
+        // Fazer uma chamada à API para adicionar o comentário
+        const response = await axios.post(`${URL_SERVER}/comments/${postId}`, {
+            commenterName: 'Username',
+            commentText,
+        }, { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (response.status === 201) {
+            console.log('Comment added successfully!');
+            // Atualizar os comentários para a postagem atual
+            fetchCommentsForPost(postId);
+        } else {
+            console.error('Error adding comment:', response);
+        }
+
+        // Fechar o modal de comentários
+        commentModalOpen.value = false;
+    } catch (error) {
+        console.error('Error adding comment:', error.message || error);
     }
-
-    // Fazer uma chamada à API para adicionar o comentário
-    const response = await axios.post(`${URL_SERVER}/comments/${postId}`, {
-      commenterName: 'Username',
-      commentText,
-    });
-
-    if (response.status === 201) {
-      console.log('Comment added successfully!');
-      // Atualizar os comentários para a postagem atual
-      fetchCommentsForPost(postId);
-    } else {
-      console.error('Error adding comment:', response);
-    }
-
-    // Fechar o modal de comentários
-    commentModalOpen.value = false;
-  } catch (error) {
-    console.error('Error adding comment:', error.message || error);
-  }
 }
 
 
@@ -362,72 +372,72 @@ async function adicionarComentario() {
 
 <style scoped>
 .profile-card {
-  /* Aumenta o tamanho da foto de perfil */
-  --v-avatar-size: 600px;
-  /* /* Ajuste o valor conforme necessário */
+    /* Aumenta o tamanho da foto de perfil */
+    --v-avatar-size: 600px;
+    /* /* Ajuste o valor conforme necessário */
 
-  /* Aumenta o tamanho do título */
-  font-size: 50px;
-  /* Ajuste o valor conforme necessário */
+    /* Aumenta o tamanho do título */
+    font-size: 50px;
+    /* Ajuste o valor conforme necessário */
 }
 
 /* Aumenta o tamanho do subtítulo */
 .profile-card .v-subtitle {
-  font-size: 50px;
-  /* Ajuste o valor conforme necessário */
+    font-size: 50px;
+    /* Ajuste o valor conforme necessário */
 }
 
 /* Aumenta o tamanho do texto do cartão */
 .profile-card .v-card-text {
-  font-size: 20px;
-  /* Ajuste o valor conforme necessário */
+    font-size: 20px;
+    /* Ajuste o valor conforme necessário */
 }
 
 .invent-table {
-  padding: 0 100px;
-  margin: 0 auto;
+    padding: 0 100px;
+    margin: 0 auto;
 }
 
 .invent-cards {
-  padding: 0px 100px;
-  margin: 20px auto;
+    padding: 0px 100px;
+    margin: 20px auto;
 }
 
 .link-no-bold {
-  font-weight: normal;
-  color: white;
-  /* Remove o negrito */
+    font-weight: normal;
+    color: white;
+    /* Remove o negrito */
 }
 
 .imgg {
-  margin: 70px;
+    margin: 70px;
 }
 
 .profile-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  line-height: 20px;
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 20px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
 h2 {
-  align-self: center;
+    align-self: center;
 }
 
 .link {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 .profile-card {
-  margin-top: 120px;
+    margin-top: 120px;
 }
 
 .postagens {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  margin: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin: 20px;
 
 
 
@@ -437,31 +447,32 @@ h2 {
 }
 
 .cardpostagem {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 
 
-  width: 750px;
-  height: auto;
-  padding: 30px;
-  margin: 30px;
-  min-height: 700px;
-}
-.coments{
-
-  height: 200px;
-  width: 70%;
-}
-.v-col.postagens{
-  display: flex;
-  justify-content: center;
-  padding-bottom: 300px;
- 
-
+    width: 750px;
+    height: auto;
+    padding: 30px;
+    margin: 30px;
+    min-height: 700px;
 }
 
-.v-col.coments{
-  height: 150px;
+.coments {
+
+    height: 200px;
+    width: 70%;
 }
 
+.v-col.postagens {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 300px;
+
+
+}
+
+.v-col.coments {
+    height: 150px;
+}
 </style>
