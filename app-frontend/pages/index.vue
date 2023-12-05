@@ -430,7 +430,7 @@ h2 {
 }
 
 .profile-card {
-    margin-top: 120px;
+    margin-top: 30px;
 }
 
 .postagens {
@@ -466,13 +466,20 @@ h2 {
 
 .v-col.postagens {
     display: flex;
-    justify-content: center;
-    padding-bottom: 300px;
+    justify-content:flex-start;
+     margin-bottom: 400px;
+    
 
 
 }
 
 .v-col.coments {
     height: 150px;
+}
+
+
+.v-img__img v-img__img--contain{
+
+    margin-bottom: 30px;
 }
 </style>
