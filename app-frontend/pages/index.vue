@@ -209,7 +209,7 @@ async function createPost(novoItem) {
 
     // Obtenha o token do cookie
     const token = Cookies.get('token');
-
+    console.log(token);
     // Verifique se o token está presente
     if (!token) {
       console.error('Token não fornecido');
@@ -277,6 +277,7 @@ function getRandomProfileImageURL() {
 async function fetchData() {
   try {
     const postsResponse = await axios.get('http://localhost:5000/posts');
+
     
     for(const post of postsResponse.data){
       console.log(post._id);

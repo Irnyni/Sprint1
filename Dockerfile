@@ -1,17 +1,13 @@
-# Use uma imagem base do Nginx
-FROM nginx
+FROM node:18-alpine3.17
 
-# Remova o arquivo de configuração padrão do Nginx
-RUN rm /etc/nginx/conf.d/default.conf
+WORKDIR /usr/src/app
 
-# Copie os arquivos de configuração personalizados para o diretório de configuração do Nginx
-COPY nginx.conf /etc/nginx/conf.d/
+COPY package*.json ./
 
-# Copie os arquivos do projeto Nuxt para o diretório de trabalho do Nginx
-COPY dist/ /usr/share/nginx/html/
+RUN npm install
 
-# Exponha a porta 80
-EXPOSE 80
+EXPOSE 3000
 
-# Comando para iniciar o servidor Nginx em segundo plano
-CMD ["nginx", "-g", "daemon off;"]
+COPY . .
+
+CMD npm run dev

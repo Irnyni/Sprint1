@@ -20,16 +20,15 @@ mongoose.connect('mongodb+srv://irnyni:123@banco1.wurjpjq.mongodb.net/b1');
 
 // Importe o modelo User
 const User = require('./app-backend/src/database/model/userModel');
-
+const secretKey = 'seu_segredo_super_secreto';
 // Middleware para verificação do token
 const verifyToken = (req, res, next) => {
-  const token = req.header('Authorization');
-
-  if (!token || !token.startsWith('Bearer ')) {
+  const tokenHeader = req.header('Authorization');
+  const token = tokenHeader.split('Bearer ')[1];
+  if (!tokenHeader || !tokenHeader.startsWith('Bearer ')) {
     console.error('Token não fornecido ou no formato incorreto');
     return res.status(401).json({ error: 'Token não fornecido ou no formato incorreto' });
   }
-
   try {
     const decoded = jwt.verify(token, secretKey);
     req.user = decoded;
