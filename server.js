@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
-mongoose.connect('mongodb+srv://irnyni:123@banco1.wurjpjq.mongodb.net/b1');
+mongoose.connect('mongodb+srv://irnyni:8AG1o355drjz2wPX@banco1.wurjpjq.mongodb.net/b1');
 
 // Importe o modelo User
 const User = require('./app-backend/src/database/model/userModel');

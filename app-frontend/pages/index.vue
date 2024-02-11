@@ -460,9 +460,10 @@ h2 {
 
 .coments {
 
-    height: 200px;
-    width: 70%;
-    margin-bottom: 100px;
+
+    width: 50%;
+    margin-bottom: 30px;
+    margin-left: 80px;
 }
 
 .v-col.postagens {
@@ -474,10 +475,6 @@ h2 {
 
 }
 
-.v-col.coments {
-    height: 150px;
-
-}
 
 
 .v-img__img v-img__img--contain{
